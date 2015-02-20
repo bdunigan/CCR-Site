@@ -1,0 +1,679 @@
+msgid ""
+msgstr ""
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Project-Id-Version: \n"
+"POT-Creation-Date: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: Barb Atkinson <barbi.atkinson@gmaill.com>\n"
+"Language-Team: \n"
+"MIME-Version: 1.0\n"
+"X-Generator: Poedit 1.5.5\n"
+
+#. Text in function
+#: genesischurch-wp/functions.php:280
+msgid "%1$s at %2$s"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions/theme-options-widgets.php:1
+msgid "404 Widget"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:278
+msgid "<span class=\"comment-author\">%s</span>"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Add New Slider Item"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/sitemap.php:137
+msgid "All Blog Posts"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/sitemap.php:164
+msgid "Archives"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions/theme-options-widgets.php:1
+msgid "Blog"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/sitemap.php:92
+msgid "Categories"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid ""
+"Choose the pdf list from the dropdown. It is populated with the pdf docs "
+"that are listed in the Media Library."
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-event.php:197
+msgid "Click here to view a larger map and receive driving directions"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/sitemap.php:80
+msgid "Comment Feed"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/comments.php:30
+msgid "Comments are closed."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions/theme-options-widgets.php:1
+msgid "Contact Map"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-event.php:97
+msgid "Date:"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Edit Slider Item"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "End Date"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "End Time"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "End date of the event."
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/functions.php:792
+msgid ""
+"Enter a URL of the image or video you want the featured image to open in the "
+"lightbox."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Enter any special notes about this event, parking etc"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/functions.php:62
+msgid ""
+"Enter some brief text here that will appear before the page content.  "
+"Leaving this blank will mean only the page title will appear on the "
+"background-image (or color) that you have set from the theme options."
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/functions.php:168
+msgid ""
+"Enter some brief text here that will appear before the post content.  "
+"Leaving this blank will mean only the page title will appear on the "
+"background-image (or color) that you have set from the theme options."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Enter the URL for the video file."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Enter the embed code to place a map on this event."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Enter the end time of the event."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Enter the price/cost of this event (if any)."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Enter the start time of the event."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Enter the url for the google map link (leave blank to disable)."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Enter the venue address / location on this event."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Enter the venue name on this event."
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/simple-widget.php:41
+msgid "Event # Display?"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Event Categories"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/simple-widget.php:45
+msgid "Event Date Sort by ASC?"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Event Details"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Event Item"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/simple-widget.php:12
+msgid "Event Loop"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Event Notes"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions/theme-options-widgets.php:1
+msgid "Event Page"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Events"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/sitemap.php:72
+msgid "Feeds"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/sitemap.php:79
+msgid "Full content"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Galleries"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Gallery Item"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Google Map Link"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Google Map iFrame"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions/theme-options-widgets.php:1
+msgid "Header Widget"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-event.php:76
+msgid "Location:"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-sermon.php:157
+msgid "Main"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/sitemap.php:79
+msgid "Main RSS"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-event.php:191
+msgid "Map Link:"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Name of Venue"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "New Slider Item"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/archive-sermon.php:183
+#: genesischurch-wp/taxonomy-eventcats.php:204
+#: genesischurch-wp/template-eventpast.php:182
+#: genesischurch-wp/template-eventall.php:177
+#: genesischurch-wp/template-event.php:182
+#: genesischurch-wp/taxonomy-sermoncats.php:183 genesischurch-wp/search.php:95
+#: genesischurch-wp/archive-event.php:201 genesischurch-wp/index.php:60
+#: genesischurch-wp/template-sermon.php:199
+#: genesischurch-wp/taxonomy-speakers.php:183
+msgid "Newer"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/sitemap.php:99
+msgid "No categories"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/404.php:25
+msgid ""
+"No worries you probably mistyped something, looked for something that does "
+"not exist anymore or just downright broke stuffs - just carry on with the "
+"menu at the top!"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-event.php:209
+msgid "Notes:"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Nothing found"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Nothing found in Trash"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/archive-sermon.php:177
+#: genesischurch-wp/taxonomy-eventcats.php:198
+#: genesischurch-wp/template-eventpast.php:176
+#: genesischurch-wp/template-eventall.php:171
+#: genesischurch-wp/template-event.php:176
+#: genesischurch-wp/taxonomy-sermoncats.php:177 genesischurch-wp/search.php:89
+#: genesischurch-wp/archive-event.php:195 genesischurch-wp/index.php:54
+#: genesischurch-wp/template-sermon.php:193
+#: genesischurch-wp/taxonomy-speakers.php:177
+msgid "Older"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-sermon.php:184
+msgid "PDF Download"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "PDF File URL"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions/theme-options-widgets.php:1
+msgid "Page"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Page Intro"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/404.php:19
+msgid "Page Not Found"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/sitemap.php:56
+msgid "Pages"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/sitemap.php:148
+msgid "Permanent Link to"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-sermon.php:173
+msgid "Play Audio"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-sermon.php:176
+msgid "Play Video"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Post Intro"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-rightsidebar.php:69
+#: genesischurch-wp/content-video.php:29 genesischurch-wp/content.php:29
+#: genesischurch-wp/single.php:62 genesischurch-wp/content-audio.php:29
+#: genesischurch-wp/single-fullwidth.php:69
+#: genesischurch-wp/content-gallery.php:29
+#: genesischurch-wp/single-leftsidebar.php:69
+msgid "Posted In:"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-rightsidebar.php:63
+#: genesischurch-wp/content-video.php:23 genesischurch-wp/content.php:23
+#: genesischurch-wp/single.php:56 genesischurch-wp/content-audio.php:23
+#: genesischurch-wp/single-fullwidth.php:63
+#: genesischurch-wp/content-gallery.php:23
+#: genesischurch-wp/single-leftsidebar.php:63
+msgid "Posted by:"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Price / Cost of Event"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-event.php:173
+msgid "Price:"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Primary Navigation"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/search.php:14
+msgid "Results for "
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Search Slider"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Secondary Navigation"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Sermon Categories"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Sermon Info"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Sermon Item"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions/theme-options-widgets.php:1
+msgid "Sermon Page"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Sermon Speaker Navigation"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Sermons"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/simple-widget.php:49
+msgid "Show Past Events?"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Sidebar Menu"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/search.php:79
+msgid ""
+"Sorry, but nothing matched your search criteria. Please try again with some "
+"different keywords."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Speakers"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Start Date"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Start Time"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Start date of the event."
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-rightsidebar.php:77
+#: genesischurch-wp/content-video.php:37 genesischurch-wp/content.php:37
+#: genesischurch-wp/single.php:70 genesischurch-wp/content-audio.php:37
+#: genesischurch-wp/single-fullwidth.php:77
+#: genesischurch-wp/content-gallery.php:37
+#: genesischurch-wp/single-leftsidebar.php:77
+msgid "Tags:"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/archive-sermon.php:167
+#: genesischurch-wp/template-eventpast.php:40
+#: genesischurch-wp/template-eventall.php:40 genesischurch-wp/page.php:52
+#: genesischurch-wp/single-rightsidebar.php:204
+#: genesischurch-wp/page-leftsidebar.php:58
+#: genesischurch-wp/template-event.php:40
+#: genesischurch-wp/page-fullwidth.php:52 genesischurch-wp/page-contact.php:72
+#: genesischurch-wp/sitemap.php:41 genesischurch-wp/single.php:197
+#: genesischurch-wp/single-event.php:259
+#: genesischurch-wp/page-rightsidebar.php:58
+#: genesischurch-wp/single-fullwidth.php:204
+#: genesischurch-wp/archive-event.php:185
+#: genesischurch-wp/template-portgallery.php:41 genesischurch-wp/index.php:45
+#: genesischurch-wp/template-sermon.php:41
+#: genesischurch-wp/single-sermon.php:203
+#: genesischurch-wp/single-leftsidebar.php:204
+#: genesischurch-wp/simple-widget.php:179
+msgid "There are no posts to display. Try using the search."
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/comments.php:10
+msgid ""
+"This post is password protected. Enter the password to view any comments."
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-event.php:152
+msgid "Time:"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/simple-widget.php:37
+msgid "Title"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Types"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "URL goes here"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "Venue Address / Location"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "Video File URL"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "View Slider Item"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/functions.php:289
+msgid "Your comment is awaiting moderation."
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "event"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "eventcategory"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-rightsidebar.php:216
+#: genesischurch-wp/single.php:209 genesischurch-wp/single-event.php:240
+#: genesischurch-wp/single-fullwidth.php:216
+#: genesischurch-wp/single-sermon.php:216
+#: genesischurch-wp/single-leftsidebar.php:216
+msgid "facebook"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:303
+msgid "galleries"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-rightsidebar.php:218
+#: genesischurch-wp/single.php:211 genesischurch-wp/single-event.php:242
+#: genesischurch-wp/single-fullwidth.php:218
+#: genesischurch-wp/single-sermon.php:218
+#: genesischurch-wp/single-leftsidebar.php:218
+msgid "google"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-rightsidebar.php:222
+#: genesischurch-wp/single.php:215 genesischurch-wp/single-event.php:246
+#: genesischurch-wp/single-fullwidth.php:222
+#: genesischurch-wp/single-sermon.php:222
+#: genesischurch-wp/single-leftsidebar.php:222
+msgid "pinterest"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/searchform.php:5
+msgid "search"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "sermon"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "sermoncategory"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "speakers"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/taxonomy-eventcats.php:95
+#: genesischurch-wp/taxonomy-eventcats.php:101
+#: genesischurch-wp/taxonomy-eventcats.php:107
+#: genesischurch-wp/taxonomy-eventcats.php:113
+#: genesischurch-wp/taxonomy-eventcats.php:119
+#: genesischurch-wp/taxonomy-eventcats.php:125
+#: genesischurch-wp/single-event.php:108 genesischurch-wp/single-event.php:114
+#: genesischurch-wp/single-event.php:120 genesischurch-wp/single-event.php:126
+#: genesischurch-wp/single-event.php:132 genesischurch-wp/single-event.php:138
+#: genesischurch-wp/archive-event.php:94
+#: genesischurch-wp/archive-event.php:100
+#: genesischurch-wp/archive-event.php:106
+#: genesischurch-wp/archive-event.php:112
+#: genesischurch-wp/archive-event.php:118
+#: genesischurch-wp/archive-event.php:124
+msgid "to"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-rightsidebar.php:220
+#: genesischurch-wp/single.php:213 genesischurch-wp/single-event.php:244
+#: genesischurch-wp/single-fullwidth.php:220
+#: genesischurch-wp/single-sermon.php:220
+#: genesischurch-wp/single-leftsidebar.php:220
+msgid "twitter"
+msgstr ""
+
+#. Text in function
+#: genesischurch-wp/functions.php:794
+msgid "types"
+msgstr ""
+
+#. Text in echo
+#: genesischurch-wp/single-event.php:62
+msgid "will be held at"
+msgstr ""
