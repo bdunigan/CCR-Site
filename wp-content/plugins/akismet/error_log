@@ -1,2 +1,1 @@
-[26-Dec-2012 02:55:10 UTC] PHP Fatal error:  Call to undefined function add_action() in /home/agape/public_html/wp-content/plugins/akismet/legacy.php on line 356
-[30-May-2013 05:52:04 UTC] PHP Fatal error:  Call to undefined function add_action() in /home/agape/public_html/wp-content/plugins/akismet/legacy.php on line 356
+[15-May-2014 07:39:48 UTC] PHP Fatal error:  Call to undefined function add_action() in /home/calvaryc/public_html/wp-content/plugins/akismet/legacy.php on line 356

@@ -1,5 +1,6 @@
 #Bryan New
 wp-content/uploads/*
+.settings
 
 # Windows image file caches
 Thumbs.db

@@ -1,1 +1,0 @@
-[01-Jan-2012 00:46:40] PHP Fatal error:  Call to undefined function  get_option() in /home/agape/public_html/wp-content/plugins/audio-player/audio-player.php on line 35

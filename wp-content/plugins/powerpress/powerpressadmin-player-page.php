@@ -1,27 +1,79 @@
-<?php
+<?php
 // PowerPress Player settings page
 
 require_once( POWERPRESS_ABSPATH. '/powerpress-player.php'); // Include, if not included already
+
+function powerpressplayer_mediaelement_info()
+{
+?>
+	<p>
+		<?php echo __('MediaElement.js is an open source HTML5 audio and video player that supports both audio (mp3, m4a and oga) and video (mp4, m4v, webm, ogv and flv) media files. It includes all the necessary features for playback including a play/pause button, scroll-able position bar, elapsed time, total time, mute button and volume control.', 'powerpress'); ?>
+	</p>
+	
+	<p>
+		<?php echo __('MediaElement.js is the default player in Blubrry PowerPress because it is HTML and CSS based, meets accessibility standards including WebVTT, and will play in any browser using either HTML5, Flash or Silverlight for playback.', 'powerpress'); ?>
+	</p>
+<?php
+}
 
 function powerpressplayer_flowplayer_info()
 {
 ?>
 	<p>
-		<?php echo __('Flow Player Classic is an open source flash player that supports both audio (mp3 and m4a) and video (mp4, m4v and flv) media files. It includes all the necessary features for playback including a play/pause button, scrollable position bar, ellapsed time, total time, mute button and volume control.', 'powerpress'); ?>
-	</p>
-	
-	<p>
-		<?php echo __('Flow Player Classic was chosen as the default player in Blubrry PowerPress because if its backwards compatibility with older versions of Flash and support for both audio and video.', 'powerpress'); ?>
+		<?php echo __('Flow Player Classic is an open source flash player that supports both audio (mp3 and m4a) and video (mp4, m4v and flv) media files. It includes all the necessary features for playback including a play/pause button, scroll-able position bar, elapsed time, total time, mute button and volume control.', 'powerpress'); ?>
 	</p>
 <?php
-}
-	
-function powerpress_admin_players($type='audio')
-{
-	$General = powerpress_get_settings('powerpress_general');
-	$select_player = false;
-	if( isset($_GET['sp']) )
-		$select_player = true;
+}
+
+function powerpressplayer_videojs_info()
+{
+	$plugin_link = '';
+	
+	if( !function_exists('add_videojs_header') && file_exists( WP_PLUGIN_DIR . '/' . 'videojs-html5-video-player-for-wordpress' ) ) // plugin downloaded but not activated...
+	{
+		$plugin_file = 'videojs-html5-video-player-for-wordpress' . '/' . 'video-js.php';
+		$plugin_link = '<a href="' . esc_url(wp_nonce_url(admin_url('plugins.php?plugin_status=active&action=activate&plugin=' . $plugin_file ), 'activate-plugin_' . $plugin_file)) .
+										'"title="' . esc_attr__('Activate Plugin') . '"">' . __('VideoJS - HTML5 Video Player for WordPress plugin', 'powerpress') . '</a>';
+	
+	
+	} else {
+		$plugin_link = '<a href="'. esc_url( network_admin_url( 'plugin-install.php?tab=plugin-information&plugin=' . 'videojs-html5-video-player-for-wordpress' .
+									'&TB_iframe=true&width=600&height=550' ) ) .'" class="thickbox" title="' .
+									esc_attr__('Install Plugin') . '">'. __('VideoJS - HTML5 Video Player for WordPress plugin', 'powerpress') . '</a>';
+	}
+?>
+	<p>
+		<?php echo __('VideoJS is a HTML5 JavaScript and CSS video player with fallback to Flash. ', 'powerpress'); ?>
+	</p>
+	
+	<?php if( $plugin_link ) { ?>
+	<p <?php echo ( function_exists('add_videojs_header') ?'':' style="background-color: #FFFFE0; border: 1px solid #E6DB55; padding: 8px 12px; line-height: 29px; font-weight: bold; font-size: 14px; display:inline;"'); ?>>
+		<?php echo sprintf(__('The %s must be installed and activated in order to enable this feature.', 'powerpress'), $plugin_link ); ?>
+	</p>
+	<?php } ?>
+<?php
+}
+
+function powerpress_admin_players($type='audio')
+{
+	$General = powerpress_get_settings('powerpress_general');
+	
+	if( version_compare($GLOBALS['wp_version'], '3.6-beta', '<') && empty($General['player']) )
+		$General['player'] = 'default';
+	else if( empty($General['player']) )
+		$General['player'] = 'mediaelement-audio';
+	
+	if( version_compare($GLOBALS['wp_version'], '3.6-beta', '<') && empty($General['player']) )
+		$General['video_player'] = '';
+	else if( empty($General['video_player']) )
+		$General['video_player'] = 'mediaelement-video';
+	
+	if( empty($General['audio_custom_play_button']) )
+		$General['audio_custom_play_button'] = '';
+	
+	$select_player = false;
+	if( isset($_GET['sp']) )
+		$select_player = true;
 
 	if( $type == 'video' )
 	{
@@ -41,20 +93,25 @@ function powerpress_admin_players($type='audio')
 	$Audio['flashmp3-maxi'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/Flash_Maxi_Player.mp3';
 	$Audio['simple_flash'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/Simple_Flash_MP3_Player.mp3';
 	$Audio['audioplay'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/AudioPlay.mp3';
-	$Audio['html5audio'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/HTML5Audio.mp3';
+	$Audio['html5audio'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/html5.mp3';
+	$Audio['mediaelement-audio'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/MediaElement_audio.mp3';
 		
 	
 	$Video = array();
 	$Video['flare-player'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/FlarePlayer.mp4';
-	$Video['flow-player-classic'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/FlowPlayerClassic.flv';
-	$Video['html5video'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/HTML5Video.mp4';
+	$Video['flow-player-classic'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/flow.mp4';
+	$Video['html5video'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/html5.mp4';
+	$Video['videojs-html5-video-player-for-wordpress'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/videojs.mp4';
+	$Video['mediaelement-video'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/MediaElement_video.mp4';
+	//$Video['mediaelement-video'] = 'http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/videojs.mp4';
 		/*
 		<div><
 		object classid="clsid:D27CDB6E-AE6D-11cf-96B8-444553540000" codebase="http://download.macromedia.com/pub/shockwave/cabs/flash/swflash.cab#version=10,0,0,0" width="30" height="30">
 		<PARAM NAME=movie VALUE="http://www.strangecube.com/audioplay/online/audioplay.swf?file=http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/AudioPlay.mp3&auto=no&sendstop=yes&repeat=1&buttondir=http://www.strangecube.com/audioplay/online/alpha_buttons/negative&bgcolor=0xffffff&mode=playpause"><PARAM NAME=quality VALUE=high><PARAM NAME=wmode VALUE=transparent><embed src="http://www.strangecube.com/audioplay/online/audioplay.swf?file=http://media.blubrry.com/blubrry/content.blubrry.com/blubrry/AudioPlay.mp3&auto=no&sendstop=yes&repeat=1&buttondir=http://www.strangecube.com/audioplay/online/alpha_buttons/negative&bgcolor=0xffffff&mode=playpause" quality=high wmode=transparent width="30" height="30" align="" TYPE="application/x-shockwave-flash" pluginspage="http://www.macromedia.com/go/getflashplayer"></embed></object></div><!-- End of generated code -->
 		*/
 		
-		
+		if( $type == 'video' && function_exists('add_videojs_header') )
+			add_videojs_header();
 ?>
 <link rel="stylesheet" href="<?php echo powerpress_get_root_url(); ?>3rdparty/colorpicker/css/colorpicker.css" type="text/css" />
 <script type="text/javascript" src="<?php echo powerpress_get_root_url(); ?>3rdparty/colorpicker/js/colorpicker.js"></script>
@@ -123,12 +180,12 @@ jQuery(document).ready(function($) {
 //-->
 </script>
 
-
-<!-- special page styling goes here -->
-<style type="text/css">
-div.color_control { display: block; float:left; width: 100%; padding:  0; }
-div.color_control input { display: inline; float: left; }
-div.color_control div.color_picker { display: inline; float: left; margin-top: 3px; }
+
+<!-- special page styling goes here -->
+<style type="text/css">
+div.color_control { display: block; float:left; width: 100%; padding:  0; }
+div.color_control input { display: inline; float: left; }
+div.color_control div.color_picker { display: inline; float: left; margin-top: 3px; }
 #player_preview { margin-bottom: 0px; height: 50px; margin-top: 8px;}
 input#colorpicker-value-input {
 	width: 60px;
@@ -164,17 +221,17 @@ table.html5formats tr td {
 }
 table.html5formats tr > td:first-child {
 	border-left: 1px solid #000000;
-}
-</style>
-<?php
-	
-	// mainly 2 pages, first page selects a player, second configures the player, if there are optiosn to configure for that player. If the user is on the second page,
-	// a link should be provided to select a different player.
-	if( $select_player )
-	{
-?>
-<input type="hidden" name="action" value="powerpress-select-player" />
-<h2><?php echo __('Blubrry PowerPress Player Options', 'powerpress'); ?></h2>
+}
+</style>
+<?php
+	
+	// mainly 2 pages, first page selects a player, second configures the player, if there are optiosn to configure for that player. If the user is on the second page,
+	// a link should be provided to select a different player.
+	if( $select_player )
+	{
+?>
+<input type="hidden" name="action" value="powerpress-select-player" />
+<h2><?php echo __('Blubrry PowerPress Player Options', 'powerpress'); ?></h2>
 <p style="margin-bottom: 0;"><?php echo __('Select the media player you would like to use.', 'powerpress'); ?></p>
 
 <?php
@@ -186,7 +243,26 @@ table.html5formats tr > td:first-child {
 <th scope="row">&nbsp;</th>  
 <td>
 	<ul>
-		<li><label><input type="radio" name="VideoPlayer[video_player]" id="player_flow_player_classic_player" value="flow-player-classic" <?php if( @$General['video_player'] == 'flow-player-classic' ) echo 'checked'; ?> />
+<?php
+		if( version_compare($GLOBALS['wp_version'], '3.6-alpha', '>') )
+		{
+?>
+		<li><label><input type="radio" name="VideoPlayer[video_player]" id="player_mediaelement_video" value="mediaelement-video" <?php if( $General['video_player'] == 'mediaelement-video' ) echo 'checked'; ?> />
+		<?php echo __('MediaElement.js Media Player (default)', 'powerpress'); ?></label> <?php echo powerpressadmin_new(); ?>
+			 <strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_mediaelement_video" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
+		</li>
+		<li style="margin-left: 30px; margin-bottom:16px;">
+			<p>
+<?php
+			echo powerpressplayer_build_mediaelementvideo( $Video['mediaelement-video'] );
+?>
+			</p>
+			<?php powerpressplayer_mediaelement_info(); ?>
+		</li>
+<?php
+			}
+?>
+		<li><label><input type="radio" name="VideoPlayer[video_player]" id="player_flow_player_classic_player" value="flow-player-classic" <?php if( $General['video_player'] == 'flow-player-classic' ) echo 'checked'; ?> />
 		<?php echo __('Flow Player Classic', 'powerpress'); ?></label>
 			 <strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_flow_player_classic_player" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
 		</li>
@@ -201,7 +277,7 @@ table.html5formats tr > td:first-child {
 ?>
 		</li>
 		
-		<li><label><input type="radio" name="VideoPlayer[video_player]" id="player_html5video" value="html5video" <?php if( @$General['video_player'] == 'html5video' ) echo 'checked'; ?> /> <?php echo __('HTML5 Video Player', 'powerpress'); ?>  <?php echo powerpressadmin_new(); ?></label>
+		<li><label><input type="radio" name="VideoPlayer[video_player]" id="player_html5video" value="html5video" <?php if( $General['video_player'] == 'html5video' ) echo 'checked'; ?> /> <?php echo __('HTML5 Video Player', 'powerpress'); ?>  </label>
 			<strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_html5video" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
 		</li>
 		<li style="margin-left: 30px; margin-bottom:16px;">
@@ -231,7 +307,7 @@ table.html5formats tr > td:first-child {
 				</tr>
 				<tr>
 					<td><i><?php echo __('Firefox', 'powerpress'); ?></i></td>
-					<td>-</td>
+					<td><strong>22.0+</strong></td>
 					<td><strong>4.0+</strong></td>
 					<td><strong>3.5+</strong></td>
 				</tr>
@@ -261,6 +337,27 @@ table.html5formats tr > td:first-child {
 			</p>
 		</li>
 		
+		<!-- videojs-html5-video-player-for-wordpress -->
+		<li><label><input type="radio" name="VideoPlayer[video_player]" id="player_videojs_html5_video_player_for_wordpress" value="videojs-html5-video-player-for-wordpress" <?php if( $General['video_player'] == 'videojs-html5-video-player-for-wordpress' ) echo 'checked'; ?> <?php echo (function_exists('add_videojs_header')?'':'disabled');  ?> />
+		<?php echo __('VideoJS', 'powerpress'); ?></label> <?php echo powerpressadmin_new(); ?>
+		<?php if ( function_exists('add_videojs_header') ) { ?>
+			 <strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_videojs_html5_video_player_for_wordpress" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
+		<?php } ?>
+		</li>
+		<li style="margin-left: 30px; margin-bottom:16px;">
+			<p>
+<?php
+		if ( function_exists('add_videojs_header') ) {
+			echo powerpressplayer_build_videojs( $Video['videojs-html5-video-player-for-wordpress'] );
+		}
+?>
+			</p>
+<?php
+	powerpressplayer_videojs_info();
+?>
+		</li>
+		
+		
 		
 	</ul>
 
@@ -271,24 +368,45 @@ table.html5formats tr > td:first-child {
 		}
 		else
 		{
-?>
-<table class="form-table">
-<tr valign="top">
-<th scope="row">&nbsp;</th>  
-<td>
-	<ul>
-		<li><label><input type="radio" name="Player[player]" id="player_default" value="default" <?php if( $General['player'] == 'default' || !isset($General['default']) ) echo 'checked'; ?> />
-		<?php echo __('Flow Player Classic (default)', 'powerpress'); ?></label>
-			 <strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_default" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
-		</li>
-		<li style="margin-left: 30px; margin-bottom:16px;">
-			<p>
+?>
+<table class="form-table">
+<tr valign="top">
+<th scope="row">&nbsp;</th>  
+<td>
+	<ul>
+
 <?php
-			echo powerpressplayer_build_flowplayerclassic( $Audio['default'] );
-?>
+		if( version_compare($GLOBALS['wp_version'], '3.6-alpha', '>') )
+		{
+?>
+		<li><label><input type="radio" name="Player[player]" id="player_mediaelement_audio" value="mediaelement-audio" <?php if( $General['player'] == 'mediaelement-audio' ) echo 'checked'; ?> />
+		<?php echo __('MediaElement.js Media Player (default)', 'powerpress'); ?></label> <?php echo powerpressadmin_new(); ?>
+			 <strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_mediaelement_audio" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
+		</li>
+		<li style="margin-left: 30px; margin-bottom:16px;">
+			<p>
+<?php
+			echo powerpressplayer_build_mediaelementaudio( $Audio['mediaelement-audio'] );
+?>
 			</p>
-			<?php powerpressplayer_flowplayer_info(); ?>
-		</li>
+			<?php powerpressplayer_mediaelement_info(); ?>
+		</li>
+<?php
+		}
+?>
+
+		<li><label><input type="radio" name="Player[player]" id="player_default" value="default" <?php if( $General['player'] == 'default' ) echo 'checked'; ?> />
+		<?php echo __('Flow Player Classic', 'powerpress'); ?></label>
+			 <strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_default" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
+		</li>
+		<li style="margin-left: 30px; margin-bottom:16px;">
+			<p>
+<?php
+			echo powerpressplayer_build_flowplayerclassic( $Audio['default'] );
+?>
+			</p>
+			<?php powerpressplayer_flowplayer_info(); ?>
+		</li>
 		
 		<li><label><input type="radio" name="Player[player]" id="player_audio_player" value="audio-player" <?php if( $General['player'] == 'audio-player' ) echo 'checked'; ?> /> <?php echo __('1 Pixel Out Audio Player', 'powerpress'); ?></label>
 			<strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_audio_player" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
@@ -298,51 +416,11 @@ table.html5formats tr > td:first-child {
 				<?php  echo powerpressplayer_build_1pxoutplayer( $Audio['audio-player'] ); ?>
 			</p>
 			<p>
-				<?php echo __('1 Pixel Out Audio Player is a popular customizable audio (mp3 only) flash player. Features include an animated play/pause button, scrollable position bar, ellapsed/remaining time, volume control and color styling options.', 'powerpress'); ?>
+				<?php echo __('1 Pixel Out Audio Player is a popular customizable audio (mp3 only) flash player. Features include an animated play/pause button, scroll-able position bar, elapsed/remaining time, volume control and color styling options.', 'powerpress'); ?>
 			</p>
 		</li>
 		
-		<li><label><input type="radio" name="Player[player]" id="player_flashmp3_maxi" value="flashmp3-maxi" <?php if( $General['player'] == 'flashmp3-maxi' ) echo 'checked'; ?> /> <?php echo __('Mp3 Player Maxi', 'powerpress'); ?></label>
-			<strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_flashmp3_maxi" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
-		</li>
-		<li style="margin-left: 30px; margin-bottom:16px;">
-			<p>
-				<?php  echo powerpressplayer_build_flashmp3maxi( $Audio['flashmp3-maxi'] ); ?>
-			</p>
-			<p>
-				<?php echo __('Flash Mp3 Maxi Player is a customizable open source audio (mp3 only) flash player. Features include pause/play/stop/file info buttons, scrollable position bar, volume control and color styling options.', 'powerpress'); ?>
-			</p>
-		</li>
-		
-		<li><label><input type="radio" name="Player[player]" id="player_simple_flash" value="simple_flash" <?php if( $General['player'] == 'simple_flash' ) echo 'checked'; ?> /> <?php echo __('Simple Flash MP3 Player', 'powerpress'); ?></label>
-			<strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_simple_flash" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
-		</li>
-		<li style="margin-left: 30px; margin-bottom:16px;">
-			<p>
-			<?php
-			echo powerpressplayer_build_simpleflash($Audio['simple_flash']);
-			?>
-			</p>
-			<p>
-				<?php echo __('Simple Flash MP3 Player is a free and simple audio (mp3 only) flash player. Features include play/pause and stop buttons.', 'powerpress'); ?>
-			</p>
-		</li>
-		
-		<li><label><input type="radio" name="Player[player]" id="player_audioplay" value="audioplay" <?php if( $General['player'] == 'audioplay' ) echo 'checked'; ?> /> <?php echo __('AudioPlay', 'powerpress'); ?></label>
-			<strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_audioplay" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
-		</li>
-		<li style="margin-left: 30px; margin-bottom:16px;">
-			<p>
-			<?php
-			echo powerpressplayer_build_audioplay($Audio['audioplay']);
-			?>
-			</p>
-			<p>
-				<?php echo __('AudioPlay is one button freeware audio (mp3 only) flash player. Features include a play/stop or play/pause button available in two sizes in either black or white.', 'powerpress'); ?>
-			</p>
-		</li>
-		
-		<li><label><input type="radio" name="Player[player]" id="player_html5audio" value="html5audio" <?php if( $General['player'] == 'html5audio' ) echo 'checked'; ?> /> <?php echo __('HTML5 Audio Player', 'powerpress'); ?>  <?php echo powerpressadmin_new(); ?></label>
+		<li><label><input type="radio" name="Player[player]" id="player_html5audio" value="html5audio" <?php if( $General['player'] == 'html5audio' ) echo 'checked'; ?> /> <?php echo __('HTML5 Audio Player', 'powerpress'); ?>  </label>
 			<strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_html5audio" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
 		</li>
 		<li style="margin-left: 30px; margin-bottom:16px;">
@@ -372,7 +450,7 @@ table.html5formats tr > td:first-child {
 				</tr>
 				<tr>
 					<td><i><?php echo __('Firefox', 'powerpress'); ?></i></td>
-					<td>-</td>
+					<td><strong>26.0+</strong></td>
 					<td>-</td>
 					<td><strong>3.5+</strong></td>
 				</tr>
@@ -400,35 +478,81 @@ table.html5formats tr > td:first-child {
 			<p>
 				<?php echo __('Flow Player Classic is used when HTML5 support is not available.', 'powerpress'); ?>
 			</p>
-		</li>
-		
-	</ul>
-
-</td>
-</tr>
+		</li>
+		
+		<li>
+			<div class="updated fade powerpress-notice inline">
+			<?php echo __('NOTICE: Due to limited use, the players below (Mp3 Player Maxi, Simple Flash MP3 Player, and AudioPlay) will be moved to a separate plugin starting with PowerPress version 6.0.', 'powerpress'); ?>
+			</div>
+		</li>
+		
+		<li><label><input type="radio" name="Player[player]" id="player_flashmp3_maxi" value="flashmp3-maxi" <?php if( $General['player'] == 'flashmp3-maxi' ) echo 'checked'; ?> /> <?php echo __('Mp3 Player Maxi', 'powerpress'); ?></label>
+			<strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_flashmp3_maxi" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
+		</li>
+		<li style="margin-left: 30px; margin-bottom:16px;">
+			<p>
+				<?php  echo powerpressplayer_build_flashmp3maxi( $Audio['flashmp3-maxi'] ); ?>
+			</p>
+			<p>
+				<?php echo __('Flash Mp3 Maxi Player is a customizable open source audio (mp3 only) flash player. Features include pause/play/stop/file info buttons, scroll-able position bar, volume control and color styling options.', 'powerpress'); ?>
+			</p>
+		</li>
+		
+		<li><label><input type="radio" name="Player[player]" id="player_simple_flash" value="simple_flash" <?php if( $General['player'] == 'simple_flash' ) echo 'checked'; ?> /> <?php echo __('Simple Flash MP3 Player', 'powerpress'); ?></label>
+			<strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_simple_flash" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
+		</li>
+		<li style="margin-left: 30px; margin-bottom:16px;">
+			<p>
+			<?php
+			echo powerpressplayer_build_simpleflash($Audio['simple_flash']);
+			?>
+			</p>
+			<p>
+				<?php echo __('Simple Flash MP3 Player is a free and simple audio (mp3 only) flash player. Features include play/pause and stop buttons.', 'powerpress'); ?>
+			</p>
+		</li>
+		
+		<li><label><input type="radio" name="Player[player]" id="player_audioplay" value="audioplay" <?php if( $General['player'] == 'audioplay' ) echo 'checked'; ?> /> <?php echo __('AudioPlay', 'powerpress'); ?></label>
+			<strong style="padding-top: 8px; margin-left: 20px;"><a href="#" id="activate_audioplay" class="activate-player"><?php echo __('Activate and Configure Now', 'powerpress'); ?></a></strong>
+		</li>
+		<li style="margin-left: 30px; margin-bottom:16px;">
+			<p>
+			<?php
+			echo powerpressplayer_build_audioplay($Audio['audioplay']);
+			?>
+			</p>
+			<p>
+				<?php echo __('AudioPlay is one button freeware audio (mp3 only) flash player. Features include a play/stop or play/pause button available in two sizes in either black or white.', 'powerpress'); ?>
+			</p>
+		</li>
+		
+	</ul>
+
+</td>
+</tr>
 </table>
 <?php
 		}
-?>
-<h4 style="margin-bottom: 0;"><?php echo __('Click \'Save Changes\' to activate and configure selected player.', 'powerpress'); ?></h4>
-<?php
-	}
-	else
-	{
-?>
+?>
+<h4 style="margin-bottom: 0;"><?php echo __('Click \'Save Changes\' to activate and configure selected player.', 'powerpress'); ?></h4>
+<?php
+	}
+	else
+	{
+?>
 <h2><?php echo __('Configure Player', 'powerpress'); ?></h2>
 <?php if( $type == 'audio' ) { ?>
 <p style="margin-bottom: 20px;"><strong><a href="<?php echo admin_url("admin.php?page=powerpress/powerpressadmin_player.php&amp;sp=1"); ?>"><?php echo __('Select a different audio player', 'powerpress'); ?></a></strong></p>
-<?php } else { ?>
-<p style="margin-bottom: 20px;"><strong><a href="<?php echo admin_url("admin.php?page=powerpress/powerpressadmin_videoplayer.php&amp;sp=1"); ?>"><?php echo __('Select a different video player', 'powerpress'); ?></a></strong></p>
+<?php } else { ?>
+<p style="margin-bottom: 20px;"><strong><a href="<?php echo admin_url("admin.php?page=powerpress/powerpressadmin_videoplayer.php&amp;sp=1"); ?>"><?php echo __('Select a different video player', 'powerpress'); ?></a></strong></p>
 <?php 
 	}
-		
+		
 	 // Start adding logic here to display options based on the player selected...
 	 if( $type == 'audio' )
-	 {
-		switch( $General['player'] )
-		{
+	 {
+		switch( $General['player'] )
+		{
 			case 'audio-player': {
 			
 				$PlayerSettings = powerpress_get_settings('powerpress_audio-player');
@@ -463,6 +587,8 @@ table.html5formats tr > td:first-child {
 					$PlayerSettings['remaining'] = 'no'; // New default setting
 				if( !isset($PlayerSettings['buffer']) )
 					$PlayerSettings['buffer'] = ''; // New default setting	
+				if( !isset($PlayerSettings['titles']) )
+					$PlayerSettings['titles'] = '';
 ?>
 <script type="text/javascript"><!--
 
@@ -613,23 +739,23 @@ function audio_player_defaults()
 	}
 }
 //-->
-</script>
-	<input type="hidden" name="action" value="powerpress-audio-player" />
-	<?php echo __('Configure the 1 pixel out Audio Player', 'powerpress'); ?>
-	
-	
-<table class="form-table">
-	
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Preview of Player', 'powerpress'); ?>
-		</th>
+</script>
+	<input type="hidden" name="action" value="powerpress-audio-player" />
+	<?php echo __('Configure the 1 pixel out Audio Player', 'powerpress'); ?>
+	
+	
+<table class="form-table">
+	
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Preview of Player', 'powerpress'); ?>
+		</th>
 		<td><div id="player_preview">
 		<?php
 			echo powerpressplayer_build_1pxoutplayer($Audio['audio-player'], array('nodiv'=>true) );
-		?>
-			</div>
-		</td>
+		?>
+			</div>
+		</td>
 	</tr>
 </table>
 
@@ -646,7 +772,7 @@ function audio_player_defaults()
 	
  <div id="tab_general" class="powerpress_tab">
  <h3><?php echo __('General Settings', 'powerpress'); ?></h3>
-<table class="form-table">
+<table class="form-table">
 	<tr valign="top">
 		<th scope="row">
 			<?php echo __('Page Background Color', 'powerpress'); ?>
@@ -659,17 +785,17 @@ function audio_player_defaults()
 			</div>
 			<small>(<?php echo __('leave blank for transparent', 'powerpress'); ?>)</small>
 		</td>
-	</tr>	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Player Background Color', 'powerpress'); ?>
-		</th>
-		<td>
-			<div class="color_control">
+	</tr>	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Player Background Color', 'powerpress'); ?>
+		</th>
+		<td>
+			<div class="color_control">
 				<input type="text" style="width: 100px;" id="bg" name="Player[bg]" class="color_field" value="<?php echo $PlayerSettings['bg']; ?>" maxlength="20" />
-				<img id="bg_prev" src="<?php echo powerpress_get_root_url(); ?>images/color_preview.gif" width="14" height="14" style="background-color: <?php echo $PlayerSettings['bg']; ?>;" class="color_preview" />
-			</div>
-		</td>
-	</tr>
+				<img id="bg_prev" src="<?php echo powerpress_get_root_url(); ?>images/color_preview.gif" width="14" height="14" style="background-color: <?php echo $PlayerSettings['bg']; ?>;" class="color_preview" />
+			</div>
+		</td>
+	</tr>
 	<tr valign="top">
 		<th scope="row">
 			<?php echo __('Width (in pixels)', 'powerpress'); ?>
@@ -753,7 +879,7 @@ function audio_player_defaults()
 			$options = array( 'yes'=>__('Yes', 'powerpress'), 'no'=>__('No', 'powerpress') );
 			powerpress_print_options( $options, $PlayerSettings['remaining']);
 ?>
-                                </select>			<?php echo __('if yes, shows remaining track time rather than ellapsed time (default: no)', 'powerpress'); ?></div>
+                                </select>			<?php echo __('if yes, shows remaining track time rather than elapsed time (default: no)', 'powerpress'); ?></div>
 		</td>
 	</tr>
 	
@@ -835,17 +961,17 @@ function audio_player_defaults()
 			</select> <?php echo __('initial volume level (default: 60)', 'powerpress'); ?>
 		</td>
 	</tr>
-				
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Volumn Background Color', 'powerpress'); ?>
-		</th>
-		<td>
-			<div class="color_control">
+				
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Volumn Background Color', 'powerpress'); ?>
+		</th>
+		<td>
+			<div class="color_control">
 				<input type="text" style="width: 100px;" id="leftbg" name="Player[leftbg]" class="color_field" value="<?php echo $PlayerSettings['leftbg']; ?>" maxlength="20" />
-				<img id="leftbg_prev" src="<?php echo powerpress_get_root_url(); ?>images/color_preview.gif" width="14" height="14" style="background-color: <?php echo $PlayerSettings['leftbg']; ?>;" class="color_preview" />
-			</div>
-		</td>
+				<img id="leftbg_prev" src="<?php echo powerpress_get_root_url(); ?>images/color_preview.gif" width="14" height="14" style="background-color: <?php echo $PlayerSettings['leftbg']; ?>;" class="color_preview" />
+			</div>
+		</td>
 	</tr>
         <tr valign="top">
 		<th scope="row">
@@ -931,11 +1057,11 @@ function audio_player_defaults()
 		</td>
 	</tr>
 
-</table>
+</table>
 </div> <!-- end tab -->
-</div> <!-- end tab wrapper -->
+</div> <!-- end tab wrapper -->
 
-<?php
+<?php
 			}; break;
                         case 'simple_flash': { ?>
 <table class="form-table">
@@ -961,13 +1087,13 @@ function audio_player_defaults()
 		</td>
 	</tr>
 </table>                            
-              <?php          }; break;
-
+              <?php          }; break;
+
 			case 'flashmp3-maxi': {
-				//get settings for Flash MP3 Maxi player
+				//get settings for Flash MP3 Maxi player
 				$PlayerSettings = powerpress_get_settings('powerpress_flashmp3-maxi');
 				
-				//set array values for dropdown lists
+				//set array values for dropdown lists
 				$autoload = array('always'=>'Always','never'=>'Never','autohide'=>'Auto Hide');
 				$volume = array('0'=>'0','25'=>'25','50'=>'50','75'=>'75','100'=>'100','125'=>'125','150'=>'150','175'=>'175','200'=>'200');
 				
@@ -1089,23 +1215,23 @@ function audio_player_defaults()
 	}
 }
 //-->
-</script>
+</script>
 	<input type="hidden" name="action" value="powerpress-flashmp3-maxi" />
-	<p><?php echo __('Configure Flash Mp3 Maxi Player', 'powerpress'); ?></p>
-<table class="form-table">
-	
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Preview of Player', 'powerpress'); ?> 
-		</th>
-		<td>
+	<p><?php echo __('Configure Flash Mp3 Maxi Player', 'powerpress'); ?></p>
+<table class="form-table">
+	
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Preview of Player', 'powerpress'); ?> 
+		</th>
+		<td>
 			<div id="player_preview"></div>
 
 <script type="text/javascript" src="<?php echo powerpress_get_root_url(); ?>3rdparty/maxi_player/generator.js"></script>
 <input type="hidden" id="gen_mp3" name="gen_mp3" value="<?php echo $Audio['flashmp3-maxi']; ?>" />
 
-
-		</td>
+
+		</td>
 	</tr>
 </table>
 
@@ -1122,35 +1248,35 @@ function audio_player_defaults()
 	
  <div id="tab_general" class="powerpress_tab">
 		<h3><?php echo __('General Settings', 'powerpress'); ?></h3>
-		<table class="form-table">
+		<table class="form-table">
         <tr valign="top">
             <td colspan="2">
             
             <?php echo __('leave blank for default values', 'powerpress'); ?>
             </td>
         </tr>
-        <tr valign="top">
-		<th scope="row">
-			<?php echo __('Player Gradient Color Top', 'powerpress'); ?>
-		</th>
-		<td>
-			<div class="color_control">
+        <tr valign="top">
+		<th scope="row">
+			<?php echo __('Player Gradient Color Top', 'powerpress'); ?>
+		</th>
+		<td>
+			<div class="color_control">
 				<input type="text" style="width: 100px;" id="bgcolor1"  name="Player[bgcolor1]" class="color_field" value="<?php echo $PlayerSettings['bgcolor1']; ?>" maxlength="20" />
-				<img id="bgcolor1_prev" src="<?php echo powerpress_get_root_url(); ?>images/color_preview.gif" width="14" height="14" style="background-color: <?php echo $PlayerSettings['bgcolor1']; ?>;" class="color_preview" />
-			</div>
-		</td>
-	</tr>
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Player Gradient Color Bottom', 'powerpress'); ?>
-		</th>
-		<td>
-			<div class="color_control">
+				<img id="bgcolor1_prev" src="<?php echo powerpress_get_root_url(); ?>images/color_preview.gif" width="14" height="14" style="background-color: <?php echo $PlayerSettings['bgcolor1']; ?>;" class="color_preview" />
+			</div>
+		</td>
+	</tr>
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Player Gradient Color Bottom', 'powerpress'); ?>
+		</th>
+		<td>
+			<div class="color_control">
 				<input type="text" style="width: 100px;" id="bgcolor2" name="Player[bgcolor2]" class="color_field" value="<?php echo $PlayerSettings['bgcolor2']; ?>" maxlength="20" />
-				<img id="bgcolor2_prev" src="<?php echo powerpress_get_root_url(); ?>images/color_preview.gif" width="14" height="14" style="background-color: <?php echo $PlayerSettings['bgcolor2']; ?>;" class="color_preview" />
-			</div>
-		</td>
-	</tr>
+				<img id="bgcolor2_prev" src="<?php echo powerpress_get_root_url(); ?>images/color_preview.gif" width="14" height="14" style="background-color: <?php echo $PlayerSettings['bgcolor2']; ?>;" class="color_preview" />
+			</div>
+		</td>
+	</tr>
 	<tr valign="top">
 		<th scope="row">
 			<?php echo __('Background Color', 'powerpress'); ?>
@@ -1164,44 +1290,44 @@ function audio_player_defaults()
 			<small><?php echo __('leave blank for transparent', 'powerpress'); ?></small>
 		</td>
 	</tr>
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Text Color', 'powerpress'); ?> 
-		</th>
-		<td>
-			<div class="color_control">
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Text Color', 'powerpress'); ?> 
+		</th>
+		<td>
+			<div class="color_control">
 				<input type="text" style="width: 100px;" id="textcolor" name="Player[textcolor]" class="color_field" value="<?php echo $PlayerSettings['textcolor']; ?>" maxlength="20" />
-				<img id="textcolor_prev" src="<?php echo powerpress_get_root_url(); ?>images/color_preview.gif" width="14" height="14" style="background-color: <?php echo $PlayerSettings['textcolor']; ?>;" class="color_preview" />
-			</div>
-		</td>
-	</tr>
-	
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Player Height (in pixels)', 'powerpress'); ?> 
-		</th>
-		<td>
-			<div class="color_control">
-				<input type="text" style="width: 50px;" id="player_height" name="Player[height]" value="<?php echo $PlayerSettings['height']; ?>" maxlength="20" />
-			</div>
-		</td>
-	</tr>
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Player Width (in pixels)', 'powerpress'); ?> 
-		</th>
-		<td>
-			<div class="color_control">
-				<input type="text" style="width: 50px;" id="player_width" name="Player[width]" value="<?php echo $PlayerSettings['width']; ?>" maxlength="20" />
-			</div>
-		</td>
+				<img id="textcolor_prev" src="<?php echo powerpress_get_root_url(); ?>images/color_preview.gif" width="14" height="14" style="background-color: <?php echo $PlayerSettings['textcolor']; ?>;" class="color_preview" />
+			</div>
+		</td>
+	</tr>
+	
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Player Height (in pixels)', 'powerpress'); ?> 
+		</th>
+		<td>
+			<div class="color_control">
+				<input type="text" style="width: 50px;" id="player_height" name="Player[height]" value="<?php echo $PlayerSettings['height']; ?>" maxlength="20" />
+			</div>
+		</td>
+	</tr>
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Player Width (in pixels)', 'powerpress'); ?> 
+		</th>
+		<td>
+			<div class="color_control">
+				<input type="text" style="width: 50px;" id="player_width" name="Player[width]" value="<?php echo $PlayerSettings['width']; ?>" maxlength="20" />
+			</div>
+		</td>
 	</tr>
 </table>
 </div>
 
  <div id="tab_buttons" class="powerpress_tab">
 		<h3><?php echo __('Button Settings', 'powerpress'); ?></h3>
-		<table class="form-table">
+		<table class="form-table">
 	<tr valign="top">
 		<th scope="row">
 			<?php echo __('Button Color', 'powerpress'); ?>
@@ -1234,42 +1360,42 @@ function audio_player_defaults()
 			</div>
 		</td>
 	</tr>
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Show Stop Button', 'powerpress'); ?> 
-		</th>
-		<td>
-			<div class="color_control">
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Show Stop Button', 'powerpress'); ?> 
+		</th>
+		<td>
+			<div class="color_control">
 				<select style="width: 100px;" id="showstop" name="Player[showstop]">
 <?php
 			$options = array( '1'=>__('Yes', 'powerpress'), '0'=>__('No', 'powerpress') );
 			powerpress_print_options( $options, $PlayerSettings['showstop']);
-?>
-                                </select>
-			</div>
-		</td>
-	</tr>
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Show Info', 'powerpress'); ?> 
-		</th>
-		<td>
-			<div class="color_control">
+?>
+                                </select>
+			</div>
+		</td>
+	</tr>
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Show Info', 'powerpress'); ?> 
+		</th>
+		<td>
+			<div class="color_control">
 				<select style="width: 100px;" id="showinfo" name="Player[showinfo]">
 <?php
 			$options = array( '1'=>__('Yes', 'powerpress'), '0'=>__('No', 'powerpress') );
 			powerpress_print_options( $options, $PlayerSettings['showinfo']);
-?>
-                                </select>
-			</div>
-		</td>
+?>
+                                </select>
+			</div>
+		</td>
 	</tr>
 </table>
 </div>
 
  <div id="tab_volume" class="powerpress_tab">
 		<h3><?php echo __('Volume Settings', 'powerpress'); ?></h3>
-		<table class="form-table">
+		<table class="form-table">
         
         <tr valign="top">
 		<th scope="row">
@@ -1300,25 +1426,25 @@ function audio_player_defaults()
 			</div>
 		</td>
 	</tr>	
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Volume Height (in pixels)', 'powerpress'); ?> 
-		</th>
-		<td>
-			<div class="color_control">
-				<input type="text" style="width: 50px;" id="volumeheight" name="Player[volumeheight]" value="<?php echo $PlayerSettings['volumeheight']; ?>" maxlength="20" />
-			</div>
-		</td>
-	</tr>
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Volume Width (in pixels)', 'powerpress'); ?> 
-		</th>
-		<td>
-			<div class="color_control">
-				<input type="text" style="width: 50px;" id="volumewidth" name="Player[volumewidth]" value="<?php echo $PlayerSettings['volumewidth']; ?>" maxlength="20" />
-			</div>
-		</td>
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Volume Height (in pixels)', 'powerpress'); ?> 
+		</th>
+		<td>
+			<div class="color_control">
+				<input type="text" style="width: 50px;" id="volumeheight" name="Player[volumeheight]" value="<?php echo $PlayerSettings['volumeheight']; ?>" maxlength="20" />
+			</div>
+		</td>
+	</tr>
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Volume Width (in pixels)', 'powerpress'); ?> 
+		</th>
+		<td>
+			<div class="color_control">
+				<input type="text" style="width: 50px;" id="volumewidth" name="Player[volumewidth]" value="<?php echo $PlayerSettings['volumewidth']; ?>" maxlength="20" />
+			</div>
+		</td>
 	</tr>
 
 </table>
@@ -1327,7 +1453,7 @@ function audio_player_defaults()
  <div id="tab_slider" class="powerpress_tab">
 		<h3><?php echo __('Slider Settings', 'powerpress'); ?></h3>
 		<table class="form-table">
-		
+		
         <tr valign="top">
 		<th scope="row">
 			<?php echo __('Show Slider', 'powerpress'); ?> 
@@ -1424,7 +1550,7 @@ function audio_player_defaults()
 			</div>
 		</td>
 	</tr>
-
+
 </table>
 </div> <!-- end tab -->
 </div><!-- end tab container -->
@@ -1459,10 +1585,10 @@ function audio_player_defaults()
 	
 	generator.updatePlayer();
 //-->
-</script>
-<?php
-			}; break;
-			
+</script>
+<?php
+			}; break;
+			
 			case 'audioplay': {
 				$PlayerSettings = powerpress_get_settings('powerpress_audioplay');
 				if( empty($PlayerSettings) ) {
@@ -1471,8 +1597,8 @@ function audio_player_defaults()
 						'buttondir' => 'negative',
 						'mode' => 'playpause'
 					);
-				}
-?>
+				}
+?>
         	<input type="hidden" name="action" value="powerpress-audioplay" />
 	<?php echo __('Configure the AudioPlay Player', 'powerpress'); ?><br clear="all" />
 
@@ -1490,7 +1616,7 @@ function audio_player_defaults()
 ?>
                 </div>
             </td>
-        </tr>
+        </tr>
 </table>
 				
 		<h2><?php echo __('General Settings', 'powerpress'); ?></h2>
@@ -1565,10 +1691,10 @@ function audio_player_defaults()
 	</tr>
 
 </table>
-<?php
+<?php
 			}; break;
 			case 'html5audio': {
-			
+				$SupportUploads = powerpressadmin_support_uploads();
 ?>
 <p><?php echo __('Configure HTML5 Audio Player', 'powerpress'); ?></p>
 <table class="form-table">
@@ -1584,39 +1710,84 @@ function audio_player_defaults()
 			</p>
 		</td>
 	</tr>
-		<tr valign="top">
-		<th scope="row">
-			&nbsp;
-		</th>
-		<td>
-			<p><?php echo __('HTML5 Audio Player has no additional settings.', 'powerpress'); ?></p>
-		</td>
+
+	
+	<tr>
+	<th scope="row">
+	<?php echo __('Play Icon', 'powerpress'); ?></th>
+	<td>
+
+	<input type="text" id="audio_custom_play_button" name="General[audio_custom_play_button]" style="width: 60%;" value="<?php echo $General['audio_custom_play_button']; ?>" maxlength="250" />
+	<a href="#" onclick="javascript: window.open( document.getElementById('audio_custom_play_button').value ); return false;"><?php echo __('preview', 'powerpress'); ?></a>
+
+	<p><?php echo __('Place the URL to the play icon above.', 'powerpress'); ?> <?php echo __('Example', 'powerpress'); ?>: http://example.com/images/audio_play_icon.jpg<br /><br />
+	<?php echo __('Leave blank to use default play icon image.', 'powerpress'); ?></p>
+
+	<?php if( $SupportUploads ) { ?>
+	<p><input name="audio_custom_play_button_checkbox" type="checkbox" onchange="powerpress_show_field('audio_custom_play_button_upload', this.checked)" value="1" /> <?php echo __('Upload new image', 'powerpress'); ?> </p>
+	<div style="display:none" id="audio_custom_play_button_upload">
+		<label for="audio_custom_play_button_file"><?php echo __('Choose file', 'powerpress'); ?>:</label><input type="file" name="audio_custom_play_button_file"  />
+	</div>
+	<?php } ?>
+	</td>
 	</tr>
 </table>
 
 <?php
-			}; break;
-		
+			}; break;
+			
+		case 'mediaelement-audio': {
+				$SupportUploads = powerpressadmin_support_uploads();
+				// TODO!
+?>
+<p><?php echo __('Configure MediaElement.js Audio Player', 'powerpress'); ?></p>
+<table class="form-table">
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Preview of Player', 'powerpress'); ?>
+		</th>
+		<td><p>
+		<?php
+		// TODO
+			echo powerpressplayer_build_mediaelementaudio($Audio['mediaelement-audio']);
+		?>
+			</p>
+		</td>
+	</tr>
+	
+	<tr valign="top">
+		<th scope="row">
+			&nbsp;
+		</th>
+		<td>
+			<p><?php echo __('MediaElement.js Player has no additional settings at this time.', 'powerpress'); ?></p>
+		</td>
+	</tr>
+</table>  
+
+<?php
+			}; break;
+		
 			default: {
 			
 				if( empty($General['player_width_audio']) )
-					$General['player_width_audio'] = '';
-			
-?>
-<p><?php echo __('Configure Flow Player Classic', 'powerpress'); ?></p>
-<table class="form-table">
-	<tr valign="top">
-		<th scope="row">
-			<?php echo __('Preview of Player', 'powerpress'); ?> 
-		</th>
-		<td>
-			<p>
+					$General['player_width_audio'] = '';
+			
+?>
+<p><?php echo __('Configure Flow Player Classic', 'powerpress'); ?></p>
+<table class="form-table">
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Preview of Player', 'powerpress'); ?> 
+		</th>
+		<td>
+			<p>
 <?php
-			echo powerpressplayer_build_flowplayerclassic( $Audio['default'] );
-?>
-			</p>
-		</td>
-	</tr>
+			echo powerpressplayer_build_flowplayerclassic( $Audio['default'] );
+?>
+			</p>
+		</td>
+	</tr>
 </table>
 
 <h2><?php echo __('General Settings', 'powerpress'); ?></h2>
@@ -1630,9 +1801,9 @@ function audio_player_defaults()
 			<?php echo __('Width of Audio mp3 player (leave blank for 320 default)', 'powerpress'); ?>
 		</td>
 	</tr>
-</table>
-<?php
-			} break;
+</table>
+<?php
+			} break;
 		}
 	 }
 	 else // Video
@@ -1670,7 +1841,60 @@ function audio_player_defaults()
 		<td>
 			<p>
 <?php
-				echo powerpressplayer_build_html5video( $Video['flare-player'] );
+				echo powerpressplayer_build_html5video( $Video['html5video'] );
+?>
+			</p>
+		</td>
+	</tr>
+</table>
+
+					<?php
+				}; break;
+				case 'videojs-html5-video-player-for-wordpress': {
+					?>
+					<p><?php echo __('Configure VideoJS', 'powerpress'); ?></p>
+<table class="form-table">
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Preview of Player', 'powerpress'); ?> 
+		</th>
+		<td>
+			<p>
+<?php
+				echo powerpressplayer_build_videojs( $Video['videojs-html5-video-player-for-wordpress'] );
+?>
+			</p>
+		</td>
+	</tr>
+</table>
+<h3><?php echo __('VideoJS Settings', 'powerpress'); ?></h3>
+<table class="form-table">
+<tr valign="top">
+<th scope="row">
+<?php echo __('VideoJS CSS Class', 'powerpress'); ?>
+</th>
+<td>
+<p>
+<input type="text" name="General[videojs_css_class]" style="width: 150px;" value="<?php echo ( empty($General['videojs_css_class']) ?'':htmlspecialchars($General['videojs_css_class']) ); ?>" /> 
+<?php echo __('Apply specific CSS styling to your Video JS player.', 'powerpress'); ?>
+</p>
+</td>
+</tr>
+</table>
+					<?php
+				}; break;
+				case 'mediaelement-video': {
+					?>
+					<p><?php echo __('Configure MediaElement.js Video Player', 'powerpress'); ?></p>
+<table class="form-table">
+	<tr valign="top">
+		<th scope="row">
+			<?php echo __('Preview of Player', 'powerpress'); ?> 
+		</th>
+		<td>
+			<p>
+<?php
+				echo powerpressplayer_build_mediaelementvideo( $Video['mediaelement-video'] );
 ?>
 			</p>
 		</td>
@@ -1683,6 +1907,18 @@ function audio_player_defaults()
 			
 			if( !isset($General['poster_play_image']) )
 				$General['poster_play_image'] = 1;
+			if( !isset($General['poster_image_audio']) )
+				$General['poster_image_audio'] = 0;
+			if( !isset($General['player_width']) )
+				$General['player_width'] = '';
+			if( !isset($General['player_height']) )
+				$General['player_height'] = '';
+			if( !isset($General['poster_image']) )
+				$General['poster_image'] = '';
+			
+			if( !isset($General['video_custom_play_button']) )
+				$General['video_custom_play_button'] = '';
+
 ?>
 <!-- Global Video Player settings (Appy to all video players -->
 <input type="hidden" name="action" value="powerpress-save-videocommon" />
@@ -1694,7 +1930,7 @@ function audio_player_defaults()
 <?php echo __('Player Width', 'powerpress'); ?>
 </th>
 <td>
-<input type="text" name="General[player_width]" style="width: 50px;" onkeyup="javascript:this.value=this.value.replace(/[^0-9]/g, '');" value="<?php echo $General['player_width']; ?>" maxlength="4" />
+<input type="text" name="General[player_width]" style="width: 50px;" onkeyup="javascript:this.value=this.value.replace(/[^0-9%]/g, '');" value="<?php echo $General['player_width']; ?>" maxlength="4" />
 <?php echo __('Width of player (leave blank for 400 default)', 'powerpress'); ?>
 </td>
 </tr>
@@ -1704,11 +1940,17 @@ function audio_player_defaults()
 <?php echo __('Player Height', 'powerpress'); ?>
 </th>
 <td>
-<input type="text" name="General[player_height]" style="width: 50px;" onkeyup="javascript:this.value=this.value.replace(/[^0-9]/g, '');" value="<?php echo $General['player_height']; ?>" maxlength="4" />
+<input type="text" name="General[player_height]" style="width: 50px;" onkeyup="javascript:this.value=this.value.replace(/[^0-9%]/g, '');" value="<?php echo $General['player_height']; ?>" maxlength="4" />
 <?php echo __('Height of player (leave blank for 225 default)', 'powerpress'); ?>
 </td>
 </tr>
-
+<?php
+		$SupportUploads = powerpressadmin_support_uploads();
+		
+// Play icon, only applicable to HTML5/FlowPlayerClassic
+		if( in_array($General['video_player'], array('flow-player-classic','html5video') ) )
+		{
+?>
 <tr valign="top">
 <th scope="row">
 <?php echo __('QuickTime Scale', 'powerpress'); ?></th>
@@ -1724,12 +1966,9 @@ function audio_player_defaults()
 	else
 		$scale_options['custom']= __('Custom', 'powerpress');
 
-
-
 while( list($value,$desc) = each($scale_options) )
 	echo "\t<option value=\"$value\"". ($General['player_scale']==$value?' selected':''). ">$desc</option>\n";
 	
-	$SupportUploads = powerpressadmin_support_uploads();
 ?>
 </select>
 <span id="player_scale_custom" style="display: <?php echo (is_numeric($General['player_scale'])?'inline':'none'); ?>">
@@ -1740,13 +1979,15 @@ while( list($value,$desc) = each($scale_options) )
 </p>
 </td>
 </tr>
-
+<?php
+		}
+?>
 <tr>
 <th scope="row">
 <?php echo __('Default Poster Image', 'powerpress'); ?></th>
 <td>
 
-<input type="text" id="poster_image" name="General[poster_image]" style="width: 60%;" value="<?php echo @$General['poster_image']; ?>" maxlength="250" />
+<input type="text" id="poster_image" name="General[poster_image]" style="width: 60%;" value="<?php echo $General['poster_image']; ?>" maxlength="250" />
 <a href="#" onclick="javascript: window.open( document.getElementById('poster_image').value ); return false;"><?php echo __('preview', 'powerpress'); ?></a>
 
 <p><?php echo __('Place the URL to the poster image above.', 'powerpress'); ?> <?php echo __('Example', 'powerpress'); ?>: http://example.com/images/poster.jpg<br /><br />
@@ -1758,18 +1999,50 @@ while( list($value,$desc) = each($scale_options) )
 	<label for="poster_image_file"><?php echo __('Choose file', 'powerpress'); ?>:</label><input type="file" name="poster_image_file"  />
 </div>
 <?php } ?>
+<?php
+		if( in_array($General['video_player'], array('flow-player-classic','html5video') ) )
+		{
+?>
 <p><input name="General[poster_play_image]" type="checkbox" value="1" <?php echo ($General['poster_play_image']?'checked':''); ?> /> <?php echo __('Include play icon over poster image when applicable', 'powerpress'); ?> </p>
 <p><input name="General[poster_image_audio]" type="checkbox" value="1" <?php echo ($General['poster_image_audio']?'checked':''); ?> /> <?php echo __('Use poster image, player width and height above for audio (Flow Player only)', 'powerpress'); ?> </p>
+<?php } ?>
 </td>
 </tr>
 
+<?php
+		// Play icon, only applicable to HTML5/FlowPlayerClassic
+		if( in_array($General['video_player'], array('flow-player-classic','html5video') ) )
+		{
+?>
+<tr>
+<th scope="row">
+<?php echo __('Play Icon', 'powerpress'); ?></th>
+<td>
+
+<input type="text" id="video_custom_play_button" name="General[video_custom_play_button]" style="width: 60%;" value="<?php echo $General['video_custom_play_button']; ?>" maxlength="250" />
+<a href="#" onclick="javascript: window.open( document.getElementById('video_custom_play_button').value ); return false;"><?php echo __('preview', 'powerpress'); ?></a>
+
+<p><?php echo __('Place the URL to the play icon above.', 'powerpress'); ?> <?php echo __('Example', 'powerpress'); ?>: http://example.com/images/video_play_icon.jpg<br /><br />
+<?php echo __('Image should 60 pixels by 60 pixels. Leave blank to use default play icon image.', 'powerpress'); ?></p>
+
+<?php if( $SupportUploads ) { ?>
+<p><input name="video_custom_play_button_checkbox" type="checkbox" onchange="powerpress_show_field('video_custom_play_button_upload', this.checked)" value="1" /> <?php echo __('Upload new image', 'powerpress'); ?> </p>
+<div style="display:none" id="video_custom_play_button_upload">
+	<label for="video_custom_play_button_file"><?php echo __('Choose file', 'powerpress'); ?>:</label><input type="file" name="video_custom_play_button_file"  />
+</div>
+<?php } ?>
+</td>
+</tr>
+<?php
+		}
+?>
 </table>
 <?php
-	 }
-?>
+	 }
+?>
 
-<?php
-	}
-}
-
+<?php
+	}
+}
+
 ?>

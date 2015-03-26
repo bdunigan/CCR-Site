@@ -43,10 +43,13 @@ if( !function_exists('add_action') )
 		global $g_import_mt_extensions;
 		
 		$partsURL = @parse_url( trim($url) );
-		if( !$partsURL )
+		if( empty($partsURL['path']) )
 			return false;
 		$filename = substr($partsURL['path'], strrpos($partsURL['path'], '/')+1 );
 		$partsFile = pathinfo($filename);
+				
+		if( empty($partsFile['extension']) )
+			return false;
 		
 		if( isset($_GET['include_only_ext']) && trim($_GET['include_only_ext']) != '' )
 		{
@@ -139,12 +142,12 @@ if( !function_exists('add_action') )
 	
 	function powerpressadmin_mt_do_import()
 	{
-		$Import = $_POST['Import'];
-		$Media = $_POST['Media'];
-		$Titles = $_POST['Titles'];
+		$Import = ( isset($_POST['Import']) ? $_POST['Import'] : array() );
+		$Media = ( isset($_POST['Media']) ? $_POST['Media'] : array() );
+		$Titles = ( isset($_POST['Titles']) ? $_POST['Titles'] : array() );
 		
 		set_time_limit(60 + (10* count($Import)) );
-		$DetectDuration = ($_POST['DetectDuration']?$_POST['DetectDuration']:0);
+		$DetectDuration = ( !empty($_POST['DetectDuration']) ? $_POST['DetectDuration'] : 0 );
 		
 		if( $DetectDuration )
 		{
@@ -161,32 +164,32 @@ if( !function_exists('add_action') )
 				if( $feed_slug == '' )
 					continue; // User decoded not to import this one..
 				$url = $Media[$post_id][$media_index];
-				//$headers = wp_remote_head($url);
+				//$headers = wp_remote_head($url, array('httpversion' => 1.1));
 				//$response = wp_remote_request($url, $options);
-				$response = wp_remote_head( $url );
+				$response = wp_remote_head( $url, array('httpversion' => 1.1) );
 				// Redirect 1
 				if( !is_wp_error( $response ) && ($response['response']['code'] == 301 || $response['response']['code'] == 302) )
 				{
 					$headers = wp_remote_retrieve_headers( $response );
-					$response = wp_remote_head( $headers['location'] );
+					$response = wp_remote_head( $headers['location'], array('httpversion' => 1.1) );
 				}
 				// Redirect 2
 				if( !is_wp_error( $response ) && ($response['response']['code'] == 301 || $response['response']['code'] == 302) )
 				{
 					$headers = wp_remote_retrieve_headers( $response );
-					$response = wp_remote_head( $headers['location'] );
+					$response = wp_remote_head( $headers['location'], array('httpversion' => 1.1) );
 				}
 				// Redirect 3
 				if( !is_wp_error( $response ) && ($response['response']['code'] == 301 || $response['response']['code'] == 302) )
 				{
 					$headers = wp_remote_retrieve_headers( $response );
-					$response = wp_remote_head( $headers['location'] );
+					$response = wp_remote_head( $headers['location'], array('httpversion' => 1.1) );
 				}
 				// Redirect 4
 				if( !is_wp_error( $response ) && ($response['response']['code'] == 301 || $response['response']['code'] == 302) )
 				{
 					$headers = wp_remote_retrieve_headers( $response );
-					$response = wp_remote_head( $headers['location'] );
+					$response = wp_remote_head( $headers['location'], array('httpversion' => 1.1) );
 				}
 				$headers = wp_remote_retrieve_headers( $response );
 
@@ -284,7 +287,7 @@ if( !function_exists('add_action') )
 			return;
 		echo '<div style="" class="updated powerpress-notice">';
 		echo '<h3 style="margin-top: 2px; margin-bottom: 2px;">Import Log</h3>';
-		$DetectDuration = ($_POST['DetectDuration']?$_POST['DetectDuration']:0);
+		$DetectDuration = ( !empty($_POST['DetectDuration']) ?$_POST['DetectDuration']:0);
 		if( $DetectDuration )
 		{
 			echo '<p style="font-weight: normal;">'. __('Duration of each mp3 detected.', 'powerpress') .'</p>';
@@ -306,7 +309,7 @@ if( !function_exists('add_action') )
 		
 		$data['feed-podcast'] = __('Feed: (podcast)', 'powerpress');
 		
-		if( is_array($Settings['custom_feeds']) )
+		if( !empty($Settings['custom_feeds']) && is_array($Settings['custom_feeds']) )
 		{
 			while( list($feed_slug,$value) = each($Settings['custom_feeds']) )
 			{
@@ -667,7 +670,7 @@ else
 						while( list($episode_index,$episode_data) = each($import_data['enclosures']) )
 						{
 							echo "File&nbsp;$index:&nbsp;";
-							if( @$episode_data['imported'] )
+							if( !empty($episode_data['imported']) )
 							{
 									echo '&nbsp;X';
 							}

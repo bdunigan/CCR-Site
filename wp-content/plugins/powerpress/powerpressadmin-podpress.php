@@ -6,7 +6,7 @@ if( !function_exists('add_action') )
 	
 	function powerpress_only_include_ext($url)
 	{
-		if( isset($_GET['include_only_ext']) && trim($_GET['include_only_ext']) != '' )
+		if( !empty($_GET['include_only_ext']) )
 		{
 			global $powerpress_only_include_ext_array;
 			if( !isset($powerpress_only_include_ext_array) )
@@ -16,10 +16,13 @@ if( !function_exists('add_action') )
 			}
 			
 			$partsURL = @parse_url( trim($url) );
-			if( !$partsURL )
+			if( empty($partsURL['path']) )
 				return false;
+			
 			$filename = substr($partsURL['path'], strrpos($partsURL['path'], '/')+1 );
 			$partsFile = pathinfo($filename);
+			if( empty($partsFile['extension']) )
+				return false;
 				
 			if( in_array( strtolower($partsFile['extension']), $powerpress_only_include_ext_array ) )
 			{
@@ -36,7 +39,7 @@ if( !function_exists('add_action') )
 		global $wpdb;
 		
 		$PodpressSettings = get_option('podPress_config');
-		if( !$PodpressSettings )
+		if( empty($PodpressSettings) )
 		{
 			$PodpressSettings = array();
 			$PodpressSettings['mediaWebPath'] = '';
@@ -72,7 +75,6 @@ if( !function_exists('add_action') )
 		$results_data = $wpdb->get_results($query, ARRAY_A);
 		if( $results_data )
 		{
-			
 			while( list($null,$row) = each($results_data) )
 			{
 				//$return = $row;
@@ -231,7 +233,7 @@ if( !function_exists('add_action') )
 	
 	function powerpressadmin_podpress_do_import()
 	{
-		$Import = $_POST['Import'];
+		$Import = ( !empty( $_POST['Import']) ? $_POST['Import'] : array() );
 		$PodPressData = powerpress_get_podpress_episodes(true);
 		
 		while( list($post_id, $podpress_episode_feeds) = each($Import) )
@@ -457,7 +459,7 @@ function select_all(index,value)
 	//echo "<pre id=\"podpress_debug_info\" style=\"display: none;\">";
 	//print_r($results);
 	//echo "</pre>";
-	//echo '<p><a href="javascript:void();" onclick="javascript:document.getElementById(\'podpress_debug_info\').style.display=\'block\';this.style.display=\'none\';return false;">Show Debug Info</a></p>';
+	//echo '<p><a href="#" onclick="javascript:document.getElementById(\'podpress_debug_info\').style.display=\'block\';this.style.display=\'none\';return false;">Show Debug Info</a></p>';
 	
 	if( count($results) == 0 || count($results) == 1 )
 	{
@@ -658,7 +660,7 @@ function select_all(index,value)
 						while( list($episode_index,$episode_data) = each($import_data['podpress_data']) )
 						{
 							echo __('File', 'powerpress') ."&nbsp;$index:&nbsp;";
-							if( @$episode_data['imported'] )
+							if( !empty($episode_data['imported']) )
 							{
 									echo '&nbsp;X';
 							}

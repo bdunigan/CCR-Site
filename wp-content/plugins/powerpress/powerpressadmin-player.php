@@ -2,18 +2,25 @@
 	// PowerPress Player administration
 	
 	
-// Handle post processing here for the players page.
+// Handle post processing here for the players page.
 function powerpress_admin_players_init()
 {
 	//wp_enqueue_script('jquery');
 	//echo "powerpres player init";
 	
+	
+	wp_enqueue_style('mediaelement');
+	wp_enqueue_style('wp-mediaelement');
+	wp_enqueue_script('mediaelement');
+	// wp_enqueue_script( 'wp-mediaelement' );
+	wp_enqueue_script( 'powerpress-mejs', powerpress_get_root_url() .'powerpress-mejs.js');
+	
 	$Settings = false; // Important, never remove this
 	$Step = 1;
 	
-	$action = (isset($_GET['action'])?$_GET['action']: (isset($_POST['action'])?$_POST['action']:false) );
-	//$type = (isset($_GET['type'])?$_GET['type']: (isset($_POST['type'])?$_POST['type']:'audio') );
-	
+	$action = (isset($_GET['action'])?$_GET['action']: (isset($_POST['action'])?$_POST['action']:false) );
+	//$type = (isset($_GET['type'])?$_GET['type']: (isset($_POST['type'])?$_POST['type']:'audio') );
+	
 	if( !$action )
 		return;
 		
@@ -51,16 +58,23 @@ function powerpress_admin_players_init()
 			powerpress_save_settings($SaveSettings, 'powerpress_audioplay');
 			powerpress_page_message_add_notice( __('AudioPlay settings saved successfully.', 'powerpress') );
 		}; break;
+		//TODO: PowerPress 5.0
+		//case 'powerpress-mediaelement':
+		//{
+		//	$SaveSettings = $_POST['Player'];
+		//	powerpress_save_settings($SaveSettings, 'powerpress_mediaelement');
+		//	powerpress_page_message_add_notice( __('MediaElement.js settings saved successfully.', 'powerpress') );
+		//}; break;
 	}
-}
-
-// add_action('init', 'powerpress_admin_players_init');
-
-function powerpress_admin_page_videoplayer_error()
-{
-
-}
-
-
-
+}
+
+// add_action('init', 'powerpress_admin_players_init');
+
+function powerpress_admin_page_videoplayer_error()
+{
+
+}
+
+
+
 ?>

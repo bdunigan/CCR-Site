@@ -1,6 +1,7 @@
 
 RewriteOptions inherit
 
+
 # BEGIN WordPress
 <IfModule mod_rewrite.c>
 RewriteEngine On
@@ -12,7 +13,3 @@ RewriteRule . /index.php [L]
 </IfModule>
 
 # END WordPress
-
-RewriteCond %{HTTP_HOST} ^.*$
-RewriteRule ^(.*)$ "http\:\/\/www\.calvarychapelraynham\.org\/$1" [R=301,L]
-

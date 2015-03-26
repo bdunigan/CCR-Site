@@ -25,7 +25,7 @@ function powerpress_admin_categoryfeeds()
 <p>
 	<?php echo sprintf( __('If you are looking to organize episodes by file or format, please use %s.', 'powerpress'),
 		'<a href="'. admin_url('admin.php?page=powerpress/powerpressadmin_customfeeds.php') .'" title="'. __('Custom Podcast Channels') .'">'. __('Custom Podcast Channels') .'</a>'); ?>
-</p>'<style type="text/css">
+</p><style type="text/css">
 .column-url {
 	width: 40%;
 }
@@ -49,18 +49,7 @@ function powerpress_admin_categoryfeeds()
 	<thead>
 	<tr>
 <?php 
-	if( function_exists('print_column_headers') )
-	{
-		print_column_headers('powerpressadmin_categoryfeeds');
-	}
-	else
-	{
-	?>
-	<th scope="col" id="name" class="manage-column column-name"><?php echo __('Category Name', 'powerpress'); ?></th>
-	<th scope="col" id="feed-slug" class="manage-column column-feed-slug"><?php echo __('Slug', 'powerpress'); ?></th>
-	<th scope="col" id="url" class="manage-column column-url"><?php echo __('Feed URL', 'powerpress'); ?></th>
-	<?php
-	}
+	print_column_headers('powerpressadmin_categoryfeeds');
 ?>
 	</tr>
 	</thead>
@@ -83,7 +72,14 @@ function powerpress_admin_categoryfeeds()
 	$count = 0;
 	while( list($null, $cat_ID) = each($Feeds) )
 	{
+		if( empty($cat_ID) )
+			continue;
 		$category = get_category_to_edit($cat_ID);
+		if( is_wp_error($category) ) {
+			// $cat_ID does not existing
+			continue;
+		}
+		//var_dump($category);
 		
 		
 		$columns = powerpress_admin_customfeeds_columns();
@@ -170,15 +166,16 @@ function powerpress_admin_categoryfeeds()
 <div class="form-wrap">
 <h3><?php echo __('Add Podcast Settings to existing Category Feed', 'powerpress'); ?></h3>
 <input type="hidden" name="action" value="powerpress-addcategoryfeed" />
+<input type="hidden" name="taxonomy" value="category" />
 <?php
 	//wp_original_referer_field(true, 'previous'); 
-	wp_nonce_field('powerpress-add-category-feed');
+	wp_nonce_field('powerpress-add-taxonomy-feed');
 ?>
 
 <div class="form-field form-required">
 	<label for="feed_name"><?php echo __('Category', 'powerpress') ?></label>
 <?php
-	wp_dropdown_categories(  array('class'=>'category-list', 'show_option_none'=>__('Select Category', 'powerpress'), 'orderby'=>'name', 'hide_empty'=>0, 'hierarchical'=>1, 'name'=>'cat', 'id'=>'cat_id' ) );
+	wp_dropdown_categories(  array('class'=>'category-list', 'show_option_none'=>__('Select Category', 'powerpress'), 'orderby'=>'name', 'hide_empty'=>0, 'hierarchical'=>1, 'name'=>'term', 'id'=>'term_id' ) );
 ?>
 	
     

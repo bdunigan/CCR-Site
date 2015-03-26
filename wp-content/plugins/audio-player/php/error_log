@@ -1,1 +1,0 @@
-[01-Jan-2012 00:47:08] PHP Fatal error:  Call to undefined function  __() in /home/agape/public_html/wp-content/plugins/audio-player/php/options-panel.php on line 10

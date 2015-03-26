@@ -16,13 +16,13 @@
 
 // ** MySQL settings - You can get this info from your web host ** //
 /** The name of the database for WordPress */
-define('DB_NAME', 'agape_wp570');
+define('DB_NAME', 'calvaryc_wp946');
 
 /** MySQL database username */
-define('DB_USER', 'agape_wp570');
+define('DB_USER', 'calvaryc_wp946');
 
 /** MySQL database password */
-define('DB_PASSWORD', '43P684p3Sw');
+define('DB_PASSWORD', 'S11s2miPmv');
 
 /** MySQL hostname */
 define('DB_HOST', 'localhost');
@@ -42,14 +42,14 @@ define('DB_COLLATE', '');
  *
  * @since 2.6.0
  */
-define('AUTH_KEY',         'ssbxl3lxxbto4mxumdydkpqjcrkj0zk4fdlsz0xqeg98hnliulmg7yyliavczlc3');
-define('SECURE_AUTH_KEY',  'lwyrz1dhpsvrjsdg8mjf2wl1bsrem0bowrgljxohr3cy7qjvcl39avd18lwllbvp');
-define('LOGGED_IN_KEY',    'qz3fcqibfkoxbjnouavrogw7f1gq9faxegeu1hmpdqbcrzwuhf6drqwnxbekpork');
-define('NONCE_KEY',        's4kzy2h16xsqd5ujmjcqvu2mthfq7mcdetbzdamiqz9nfsivr45gbzh3roh3zjcx');
-define('AUTH_SALT',        'gklcrtfezmrqql8bskhawk9gt0lapolyqrwd5c93traml88xw8jgcp0btuewu9jz');
-define('SECURE_AUTH_SALT', 'a5ud5jmahipvfvjftlgxm1xhqozkhbwcx8ycepujolikqfmzydt9upthmbryahjv');
-define('LOGGED_IN_SALT',   '960gd4ofp3zcbhj0rosysd2aejzupspokuj4rztjceykmdgbpz76jqqyz39bzzbm');
-define('NONCE_SALT',       'amfqcxyn1huge35oaeqedpnekuuxx7qbvo0syvkurghw2liclfhpv15ex54onhjz');
+define('AUTH_KEY',         '35o5rw4zo6im2qbadd1dteaavld0n57hetkkizqoxevopardzg4u67djdpucxyvj');
+define('SECURE_AUTH_KEY',  '2im5znjis4uwofzxiwoqsvoryfy8nwdjk23vdluir4in4i05j3wce49vycfyaxyt');
+define('LOGGED_IN_KEY',    'xsmik9xypeovvqgqofvj1ti75mpfvt997tfn1hrkkmffr53ijcvn81h4n41zqief');
+define('NONCE_KEY',        'ragtvmrcdke09su3lbmeergv7obx4j99gqkywbxc4ar3p6ahp2leh3ubtxthag0g');
+define('AUTH_SALT',        'ubmbbghwklreoaiplzxokz1jhfsxuv5acwc0ktmrjyn3msrmttlahprk5g96ydck');
+define('SECURE_AUTH_SALT', 'gat7zvvbfuelnkap7yeprgra3gudjdytbpsodhegkpo0h60lziamk3nf3hun4hfa');
+define('LOGGED_IN_SALT',   'tnwd7dtzonxo8yw79evlcpzp2grytdoifm2o65rsdhr8ne2zmmwjmvrjd0sa6rbp');
+define('NONCE_SALT',       'aqvuwjit75nhhdj0jxkvu4jhrnynbtm2jjjjtgebz4zosm62agc3eoprcvkziaa8');
 
 /**#@-*/
 
@@ -66,10 +66,10 @@ $table_prefix  = 'wp_';
  *
  * Change this to localize WordPress.  A corresponding MO file for the chosen
  * language must be installed to wp-content/languages. For example, install
- * de.mo to wp-content/languages and set WPLANG to 'de' to enable German
+ * de_DE.mo to wp-content/languages and set WPLANG to 'de_DE' to enable German
  * language support.
  */
-define ('WPLANG', 'en');
+define ('WPLANG', '');
 
 /**
  * For developers: WordPress debugging mode.

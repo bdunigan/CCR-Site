@@ -84,6 +84,23 @@ function powerpress_dashboard_head()
 	margin-top: 5px;
 }
 </style>
+<script type="text/javascript"><!--
+jQuery(document).ready(function($) {
+	jQuery('.powerpress-dashboard-notice').click( function(e) {
+		e.preventDefault();
+		var dash_id = jQuery(this).parents('.postbox').attr('id');
+		jQuery( '#' + dash_id + '-hide' ).prop('checked', false).triggerHandler('click');
+	
+		jQuery.ajax( {
+				type: 'POST',
+				url: '<?php echo admin_url(); ?>admin-ajax.php', 
+				data: { action: 'powerpress_dashboard_dismiss', dismiss_dash_id : dash_id },
+				success: function(response) {
+				}
+			});
+	});
+});
+// --></script>
 <?php
 }
 
@@ -91,43 +108,67 @@ function powerpress_dashboard_stats_content()
 {
 	$Settings = get_option('powerpress_general');
 	
-	if( isset($Settings['disable_dashboard_widget']) && $Settings['disable_dashboard_widget'] == 1 )
+	if( !empty($Settings['disable_dashboard_stats']) )
 		return; // Lets not do anythign to the dashboard for PowerPress Statistics
 	
 	// If using user capabilities...
-	if( @$Settings['use_caps'] && !current_user_can('view_podcast_stats') )
+	if( !empty($Settings['use_caps']) && !current_user_can('view_podcast_stats') )
 		return;
 		
-	$content = false;
-	$UserPass = $Settings['blubrry_auth'];
-	$Keyword = $Settings['blubrry_program_keyword'];
+	$content = '';
+	$UserPass = ( !empty($Settings['blubrry_auth']) ? $Settings['blubrry_auth']:'');
+	$Keyword = ( !empty($Settings['blubrry_program_keyword']) ? $Settings['blubrry_program_keyword']:'');
 	$StatsCached = get_option('powerpress_stats');
-	if( $StatsCached && $StatsCached['updated'] > (time()-(60*60*3)) )
+	if( empty($StatsCached) )
+		$StatsCached = array();
+	if( !empty($StatsCached['content']) )
 		$content = $StatsCached['content'];
+	if( empty($StatsCached['updated']) )
+		$StatsCached['updated'] = 1; // Some time
 	
-	if( !$content )
+	// If no content or it's been over 3 hours...
+	if( $UserPass && time() > ($StatsCached['updated']+(60*60*3)) )
 	{
-		if( !$UserPass )
-		{
-			$content = sprintf('<p>'. __('Wait a sec! This feature is only available to Blubrry Podcast Community members. Join our community to get free podcast statistics and access to other valuable %s.', 'powerpress') .'</p>',
-					'<a href="http://www.blubrry.com/powerpress_services/" target="_blank">'. __('Services', 'powerpress') . '</a>' );
-			$content .= ' ';
-			$content .= sprintf('<p>'. __('Our %s integrated PowerPress makes podcast publishing simple. Check out the %s on our exciting three-step publishing system!', 'powerpress') .'</p>',
-					'<a href="http://www.blubrry.com/powerpress_services/" target="_blank">'. __('Podcast Hosting', 'powerpress') .'</a>',
-					'<a href="http://www.blubrry.com/powerpress_services/" target="_blank">'. __('Video', 'powerpress') .'</a>' );
-		}
-		else
-		{
 			$api_url = sprintf('%s/stats/%s/summary.html?nobody=1', rtrim(POWERPRESS_BLUBRRY_API_URL, '/'), $Keyword);
 			$api_url .= (defined('POWERPRESS_BLUBRRY_API_QSA')?'&'. POWERPRESS_BLUBRRY_API_QSA:'');
 
-			$content = powerpress_remote_fopen($api_url, $UserPass);
-			if( $content )
-				update_option('powerpress_stats', array('updated'=>time(), 'content'=>$content) );
-			else
-				$content = __('Error: An error occurred authenticating user.', 'powerpress');
-		}
+			$new_content = powerpress_remote_fopen($api_url, $UserPass, array(), 2); // Only give this 2 seconds to return results
+			if( $new_content )
+			{
+				update_option('powerpress_stats', array('updated'=>time(), 'content'=>$new_content) );
+				$content = $new_content;
+			}
+			else 
+			{
+				if( empty($StatsCached['retry_count']) )
+					$StatsCached['retry_count'] = 1;
+				else if( $StatsCached['retry_count'] < 24 )
+					$StatsCached['retry_count']++;
+					
+				if( $StatsCached['retry_count'] > 12 ) // After 36 hours, if we keep failing to authenticate then lets clear the data and display the authentication notice.
+				{
+					$content = '';
+				}
+				// Update the updated flag so it will not try again for 3 hours...
+				update_option('powerpress_stats', array('updated'=>time(), 'content'=>$content, 'retry_count'=>$StatsCached['retry_count'] ) );
+			}
 	}
+	
+	if( !$UserPass )
+	{
+		$content = sprintf('<p>'. __('Wait a sec! This feature is only available to Blubrry Podcast Community members. Join our community to get %s and access to other valuable %s.', 'powerpress') .'</p>',
+			'<a href="http://create.blubrry.com/resources/podcast-media-download-statistics/basic-statistics/" target="_blank">'. __('Free Podcast Statistics') . '</a>',
+			'<a href="http://create.blubrry.com/resources/" target="_blank">'. __('Services', 'powerpress') . '</a>' );
+		$content .= ' ';
+		$content .= sprintf('<p>'. __('Our %s integrated PowerPress makes podcast publishing simple. Check out the %s on our exciting three-step publishing system!', 'powerpress') .'</p>',
+			'<a href="http://create.blubrry.com/resources/podcast-media-hosting/" target="_blank">'. __('Podcast Hosting', 'powerpress') .'</a>',
+			'<a href="http://create.blubrry.com/resources/powerpress/using-powerpress/blubrry-hosting-with-powerpress/" target="_blank">'. __('Video', 'powerpress') .'</a>' );
+	}
+	else if( empty($content) )
+	{
+		$content = sprintf(__('Error: A network or authentication error occurred. To verify your account, click the link &quot;click here to configure Blubrry Statistics and Hosting services&quot; found in the %s tab.', 'powerpress'), '<a href="'. admin_url("admin.php?page=powerpress/powerpressadmin_basic.php") .'#tab2">'.__('Services &amp; Statistics'.'</a>', 'powerprss') );
+	}
+	
 ?>
 <div>
 <?php
@@ -137,7 +178,7 @@ function powerpress_dashboard_stats_content()
 	{
 ?>
 	<div id="blubrry_stats_media_show">
-		<a href="<?php echo admin_url(); ?>?action=powerpress-jquery-stats&amp;KeepThis=true&amp;TB_iframe=true&amp;modal=true" title="<?php echo __('Blubrry Media statistics', 'powerpress'); ?>" class="thickbox"><?php echo __('more', 'powerpress'); ?></a>
+		<a href="<?php echo admin_url('admin.php'); ?>?action=powerpress-jquery-stats&amp;KeepThis=true&amp;TB_iframe=true&amp;modal=true" title="<?php echo __('Blubrry Media statistics', 'powerpress'); ?>" class="thickbox"><?php echo __('more', 'powerpress'); ?></a>
 	</div>
 <?php } ?>
 </div>
@@ -155,9 +196,56 @@ function powerpress_dashboard_news_content()
 	powerpressadmin_community_news();
 }
 
+function powerpress_dashboard_notice_1_content()
+{
+	$DismissedNotices = get_option('powerpress_dismissed_notices');
+	
+	if( !empty($DismissedNotices[1]) )
+		return; // Lets not do anything to the dashboard for PowerPress Notice
+	
+	$message = '<p>'. __('Apple iTunes podcast specifications for show artwork have changed! Your iTunes image should now be 1400 x 1400 in jpg format.', 'powerpress') .'</p>';
+	$message .= '<p><a href="http://www.powerpresspodcast.com/2012/05/10/itunes-podcasting-specifications-changed-may-2012-what-that-means-for-podcasting/" target="_blank">'. __('Learn more about iTunes podcasting changes', 'powerpress') .'</a></p>';
+	
+	powerpress_dashboard_notice_message(1, $message );
+}
+
+function powerpress_dashboard_notice_2_content()
+{
+	$DismissedNotices = get_option('powerpress_dismissed_notices');
+	
+	if( !empty($DismissedNotices[2]) )
+		return; // Lets not do anything to the dashboard for PowerPress Notice
+	
+	$message = '<p>'. __('Due to concerns of possible security exploits, the 1 Pixel Out Audio Player has been removed from PowerPress.', 'powerpress') .'<br />';
+	$message .= '<a href="http://blog.blubrry.com/?p=1163" target="_blank">'. __("Learn More", "powerpress") .'</a></p>';
+	
+	powerpress_dashboard_notice_message(2, $message );
+}
+
+function powerpress_dashboard_notice_3_content()
+{
+	$DismissedNotices = get_option('powerpress_dismissed_notices');
+	
+	if( !empty($DismissedNotices[3]) )
+		return; // Lets not do anything to the dashboard for PowerPress Notice
+	
+	$message = '<p>'. __('The 1 Pixel Out player is back! The security concerns have been addressed in this latest version.', 'powerpress') .'<br />';
+	$message .= '<a href="http://blog.blubrry.com/2013/02/14/1-pixel-out-player-returns-to-powerpress/" target="_blank">'. __("Learn More", "powerpress") .'</a></p>';
+	
+	powerpress_dashboard_notice_message(3, $message );
+}
+
+function powerpress_dashboard_notice_message($notice_id, $message)
+{
+	echo $message;
+	// Add link to remove this notice.
+	echo '<p><a href="#" id="powerpress_dashboard_notice_'. $notice_id .'_dismiss" class="powerpress-dashboard-notice">'. __('Dismiss', 'powerpress')  .'</a></p>';
+}
+
 
 function powerpress_feed_text_limit( $text, $limit, $finish = '&hellip;') {
 	if( strlen( $text ) > $limit ) {
+			//$text = (function_exists('mb_substr')?mb_substr($text, 0, $limit):substr($text, 0, $limit) );
 			$text = substr( $text, 0, $limit );
 		$text = substr( $text, 0, - ( strlen( strrchr( $text,' ') ) ) );
 		$text .= $finish;
@@ -174,23 +262,40 @@ function powerpress_dashboard_setup()
 	$StatsDashboard = true;
 	$NewsDashboard = true;
 	
-	if( isset($Settings['disable_dashboard_widget']) && $Settings['disable_dashboard_widget'] == 1 )
-		$StatsDashboard = false; // Lets not do anythign to the dashboard for PowerPress Statistics
+	if( !empty($Settings['disable_dashboard_stats']) )
+		$StatsDashboard = false; // Lets not do anything to the dashboard for PowerPress Statistics
 	
-	if( isset($Settings['disable_dashboard_news']) && $Settings['disable_dashboard_news'] == 1 )
-		$NewsDashboard = false; // Lets not do anythign to the dashboard for PowerPress Statistics
+	if( !empty($Settings['disable_dashboard_news']) )
+		$NewsDashboard = false; // Lets not do anything to the dashboard for PowerPress News
 		
-	if( @$Settings['use_caps'] && !current_user_can('view_podcast_stats') )
+	if( !empty($Settings['use_caps']) && !current_user_can('view_podcast_stats') )
 		$StatsDashboard = false;
-
-	if( $Settings )
+		
+	// PowerPress Dashboard Notice 3:
+	$Notice3Dashboard = false;
+	if( time() < mktime(0, 0, 0, 2, 21, 2013) ) // One week later after update, lets no longer but folks about the news
 	{
-		if( $NewsDashboard )
-			wp_add_dashboard_widget( 'powerpress_dashboard_news', __( 'Blubrry PowerPress & Community Podcast', 'powerpress'), 'powerpress_dashboard_news_content' );
-			
-		if( $StatsDashboard )
-			wp_add_dashboard_widget( 'powerpress_dashboard_stats', __( 'Blubrry Podcast Statistics', 'powerpress'), 'powerpress_dashboard_stats_content' );
+		$Notice3Dashboard = true;
+		$DismissedNotices = get_option('powerpress_dismissed_notices');
+		if( !empty($DismissedNotices[3]) )
+		{
+			$Notice3Dashboard = false; // Month notice is over
+		}
 	}
+	//$Notice1Dashboard = false;// Temporary till release
+
+	if( $Notice3Dashboard )
+	{
+		$user = wp_get_current_user();
+		powerpressadmin_add_dashboard_notice_widget($user->ID, 3);
+		wp_add_dashboard_widget( 'powerpress_dashboard_notice_3', __( 'Blubrry PowerPress Notice - February 2013', 'powerpress'), 'powerpress_dashboard_notice_3_content' );
+	}
+	
+	if( $NewsDashboard )
+		wp_add_dashboard_widget( 'powerpress_dashboard_news', __( 'Blubrry PowerPress & Community Podcast', 'powerpress'), 'powerpress_dashboard_news_content' );
+		
+	if( $StatsDashboard )
+		wp_add_dashboard_widget( 'powerpress_dashboard_stats', __( 'Blubrry Podcast Statistics', 'powerpress'), 'powerpress_dashboard_stats_content' );
 	
 	$user_options = get_user_option('powerpress_user');
 	if( empty($user_options) || empty($user_options['dashboard_installed']) || $user_options['dashboard_installed'] < 2 )
@@ -198,6 +303,8 @@ function powerpress_dashboard_setup()
 		if( !is_array($user_options) )
 			$user_options = array();
 		$user = wp_get_current_user();
+		
+		
 		
 		// First time we've seen this setting, so must be first time we've added the widgets, lets stack them at the top for convenience.
 		powerpressadmin_add_dashboard_widgets($user->ID);
@@ -207,6 +314,25 @@ function powerpress_dashboard_setup()
 	else
 	{
 		powerpressadmin_add_dashboard_widgets(false);
+	}
+}
+
+function powerpressadmin_add_dashboard_notice_widget($user_id, $notice_id)
+{
+	$user_options = get_user_option('meta-box-order_dashboard', $user_id);
+	if( $user_options )
+	{
+		$save = false;
+		if( !preg_match('/powerpress_dashboard_notice_'.$notice_id.'/', $user_options['normal']) && !preg_match('/powerpress_dashboard_notice_'.$notice_id.'/', $user_options['side']) && !preg_match('/powerpress_dashboard_notice_'.$notice_id.'/', $user_options['column3']) && !preg_match('/powerpress_dashboard_notice_'.$notice_id.'/', $user_options['column4']) )
+		{	
+			$save = true;
+			$user_options['normal'] = 'powerpress_dashboard_notice_'.$notice_id.','.$user_options['normal'];
+		}
+		
+		if( $save )
+		{
+			update_user_option($user_id, "meta-box-order_dashboard", $user_options, true);
+		}
 	}
 }
 
@@ -246,6 +372,15 @@ function powerpressadmin_add_dashboard_widgets( $check_user_id = false)
 	$dashboard_current = $wp_meta_boxes['dashboard']['normal']['core'];
 	
 	$dashboard_powerpress = array();
+	for( $i = 0; $i < 20; $i++ )
+	{
+		if( isset( $dashboard_current['powerpress_dashboard_notice_' . $i] ) )
+		{
+			$dashboard_powerpress['powerpress_dashboard_notice_' . $i] = $dashboard_current['powerpress_dashboard_notice_' . $i];
+			unset($dashboard_current['powerpress_dashboard_notice_' . $i]);
+		}
+	}
+	
 	if( isset( $dashboard_current['powerpress_dashboard_news'] ) )
 	{
 		$dashboard_powerpress['powerpress_dashboard_news'] = $dashboard_current['powerpress_dashboard_news'];
@@ -266,5 +401,20 @@ function powerpressadmin_add_dashboard_widgets( $check_user_id = false)
 	 
 add_action('admin_head-index.php', 'powerpress_dashboard_head');
 add_action('wp_dashboard_setup', 'powerpress_dashboard_setup');
+
+function powerpress_dashboard_dismiss()  // Called by AJAX call
+{
+	$dismiss_dash_id = $_POST['dismiss_dash_id'];
+	preg_match('/^powerpress_dashboard_notice_(.*)$/i', $dismiss_dash_id, $match );
+	if( empty($match[1]) )
+		exit;
+	$DismissedNotices = get_option('powerpress_dismissed_notices');
+	if( !is_array($DismissedNotices) )
+		$DismissedNotices = array();
+	$DismissedNotices[ $match[1] ] = 1;
+	update_option('powerpress_dismissed_notices',  $DismissedNotices);
+	echo 'ok';
+	exit;
+}
 
 ?>

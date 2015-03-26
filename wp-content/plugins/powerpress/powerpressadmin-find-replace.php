@@ -65,36 +65,36 @@
 					if( $FindReplace['step'] == 3 && $FindReplace['find_string'] != '' )
 					{
 						$good = true;
-						if( @$FindReplace['verify'] )
+						if( !empty($FindReplace['verify']) )
 						{
-							$response = wp_remote_head( $new_url );
+							$response = wp_remote_head( $new_url, array('httpversion' => 1.1) );
 							// Redirect 1
 							if( !is_wp_error( $response ) && ($response['response']['code'] == 301 || $response['response']['code'] == 302) )
 							{
 								$headers = wp_remote_retrieve_headers( $response );
-								$response = wp_remote_head( $headers['location'] );
+								$response = wp_remote_head( $headers['location'], array('httpversion' => 1.1) );
 							}
 							// Redirect 2
 							if( !is_wp_error( $response ) && ($response['response']['code'] == 301 || $response['response']['code'] == 302) )
 							{
 								$headers = wp_remote_retrieve_headers( $response );
-								$response = wp_remote_head( $headers['location'] );
+								$response = wp_remote_head( $headers['location'], array('httpversion' => 1.1) );
 							}
 							// Redirect 3
 							if( !is_wp_error( $response ) && ($response['response']['code'] == 301 || $response['response']['code'] == 302) )
 							{
 								$headers = wp_remote_retrieve_headers( $response );
-								$response = wp_remote_head( $headers['location'] );
+								$response = wp_remote_head( $headers['location'], array('httpversion' => 1.1) );
 							}
 							// Redirect 4
 							if( !is_wp_error( $response ) && ($response['response']['code'] == 301 || $response['response']['code'] == 302) )
 							{
 								$headers = wp_remote_retrieve_headers( $response );
-								$response = wp_remote_head( $headers['location'] );
+								$response = wp_remote_head( $headers['location'], array('httpversion' => 1.1) );
 							}
 							//$headers = wp_remote_retrieve_headers( $response );
 				
-							//$response = @wp_remote_head( $new_url );
+							//$response = @wp_remote_head( $new_url, array('httpversion' => 1.1) );
 							if ( is_wp_error( $response ) )
 							{
 								$g_FindReplaceResults[ $meta_id ]['error'] = $response->get_error_message();
@@ -261,7 +261,7 @@ dt {
 						echo '<div>';
 						powerpressadmin_find_replace_status($row['success']);
 						echo ' &nbsp; ';
-						if( @$row['error'] )
+						if( !empty($row['error']) )
 							echo $row['error'];
 						echo '</div>';
 					}
@@ -292,7 +292,7 @@ dt {
 <p class="submit">
 	<input type="submit" name="Submit" id="powerpress_save_button" class="button-primary" value="Commit Changes" onclick="return ConfirmReplace()" />
 	&nbsp;
-	<input type="checkbox" name="FindReplace[verify]" value="1" <?php if( @$FindReplace['verify'] ) echo 'checked'; ?> onchange="return VerifyCheck(this)" />
+	<input type="checkbox" name="FindReplace[verify]" value="1" <?php if( !empty($FindReplace['verify']) ) echo 'checked'; ?> onchange="return VerifyCheck(this)" />
 	<strong><?php echo __('Verify modified URLs', 'powerpress'); ?></strong>
 		(<?php echo __('Does not change media URL if link is not found or invalid', 'powerpress'); ?>)</p>
 </p>
